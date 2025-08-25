@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id              Int    @id @default(autoincrement())
+  username        String @unique
+  hashed_password String
+}
+
+model requests {
+  id                 Int       @id @default(autoincrement())
+  full_name          String
+  school             String
+  class              String
+  phone              String?
+  device_type        String
+  source             String?   @default("telegram")
+  telegram_id        BigInt?
+  track_id           String    @unique @default(dbgenerated("generate_track_id()"))
+  status             String?   @default("Принято")
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  password           String?
+  status_modified_at DateTime? @db.Timestamp(6)
+  deleted            Boolean?  @default(false)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model schools {
+  id   Int    @id @default(autoincrement())
+  name String
+  type String
+}

@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bg_custom {
+    @apply bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px];
+}
+
+.header_custom {
+    @apply flex flex-row w-full max-sm:justify-between border-b border-gray-900 fixed top-0 z-40;
+}
+
+.p_admin {
+    @apply mt-5 text-gray-900;
+}
+
+.button_admin {
+    @apply flex justify-center mx-auto mt-5 active:scale-95 transition-transform text-white rounded-xl p-2 mb-5 text-nowrap;
+}
+
+.div_request {
+    @apply border-gray-900 border-2 rounded-lg flex flex-col justify-center items-center w-80;
+}
+
+.input_request {
+    @apply bg-gray-50 border border-gray-800 text-gray-900 text-sm rounded-lg block w-full p-2.5;
+}
+
+.select_request {
+   @apply bg-gray-50 border border-gray-800 text-gray-900 text-sm rounded-lg block w-full p-2.5;
+}
+
