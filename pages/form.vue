@@ -1,7 +1,7 @@
 <template>
   <main class="items-center mt-20 z-10 h-full w-full flex flex-col justify-center">
     <div class="border-gray-900 border-2 rounded-2xl flex flex-col justify-center items-center px-6 py-8 w-full max-w-lg mx-auto">
-      <p class="text-2xl font-bold text-gray-900 mb-6">Заявка</p>
+      <p class="text-2xl text-gray-900 mb-6">Заявка</p>
       <form class="w-full space-y-5" @submit.prevent="postData">
         
         <div>
@@ -96,13 +96,14 @@
               Посмотреть продукты
           </button>
 
-        <button class="button_admin w-full bg-gray-800 hover:bg-gray-700" type="submit">Оставить заявку</button>
+        <button class="button w-full " type="submit">Оставить заявку</button>
       </form>
     </div>
     <!-- Модальное окно загрузки -->
     <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div class="bg-white p-6 rounded-lg shadow-xl text-center animate-pulse">
         <p class="text-lg font-semibold text-gray-800">Загрузка…</p>
+        <p class="text-lg font-light text-gray-700">Если загрузка не заканчивается попробуйте почистить кэш и куки и подать еще раз</p>
       </div>
     </div>
 

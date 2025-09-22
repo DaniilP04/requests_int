@@ -2,7 +2,10 @@
 export default {
   content: [],
   theme: {
-    extend: {},
+    extend: {fontFamily: {
+        roboto: ['var(--font-roboto)'],
+        ptsans: ['var(--font-ptsans)'],
+      },},
   },
   plugins: [],
 }

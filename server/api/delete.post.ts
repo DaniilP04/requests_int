@@ -1,6 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+// import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
+
+import { prisma } from '~/server/utils/db'
+
 
 // Сериализация телеграм айдишника так как он бигинт и просто так не может
 function serializeBigInt(obj: any): any {

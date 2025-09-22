@@ -1,84 +1,66 @@
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { readBody, setCookie, getRequestURL, createError } from 'h3'
+import { readBody, setCookie, createError } from 'h3'
+import { prisma } from '~/server/utils/db'
 
-const SECRET = process.env.JWT_SECRET || 'supersecret'
-const prisma = new PrismaClient()
-
-// 🔒 Brute-force protection: хранилище попыток по IP
+// 🔒 Brute-force защита
 const loginAttempts = new Map<string, { count: number; lastAttempt: number }>()
 
 export default defineEventHandler(async (event) => {
-  // 🔒 Brute-force protection: извлечение IP-адреса пользователя
+  const cfg = useRuntimeConfig()
+  const SECRET = cfg.JWT_SECRET as string
+  if (!SECRET) throw createError({ statusCode: 500, message: 'JWT secret is not set' })
+
+  // IP
   const ip =
-    event.node.req.headers['x-forwarded-for']?.toString() ||
+    event.node.req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
     event.node.req.socket.remoteAddress ||
     'unknown'
 
   const now = Date.now()
   const attempt = loginAttempts.get(ip) || { count: 0, lastAttempt: now }
 
-  // 🔒 Сброс счётчика, если прошло больше 5 минут
   if (now - attempt.lastAttempt > 5 * 60 * 1000) {
     attempt.count = 0
   }
-
   attempt.count++
   attempt.lastAttempt = now
   loginAttempts.set(ip, attempt)
 
-  // 🔒 Блокировка, если более 5 попыток за 5 минут
   if (attempt.count > 5) {
-    throw createError({
-      statusCode: 429,
-      message: 'Слишком много попыток. Подождите 5 минут.'
-    })
+    throw createError({ statusCode: 429, message: 'Слишком много попыток. Подождите 5 минут.' })
   }
 
-  try {
-    // Получение и валидация данных из запроса
-    const body = await readBody(event)
-    const { username, password } = body
-
-    if (!username || !password) {
-      throw createError({ statusCode: 400, message: 'Имя пользователя и пароль обязательны' })
-    }
-
-    // Проверка на правильность 
-    const admin = await prisma.admin.findUnique({ where: { username } })
-
-    if (!admin || !admin.hashed_password) {
-      throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
-    }
-
-    const isMatch = await bcrypt.compare(password, admin.hashed_password)
-    if (!isMatch) {
-      throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
-    }
-
-    // 🔒 Успешный вход — сбросить счётчик попыток
-    loginAttempts.delete(ip)
-
-    // Генерация JWT токена для безопасного сохранения сессия
-    const token = jwt.sign(
-      { username: admin.username }, 
-      SECRET,                       
-      { expiresIn: '1h' }           
-    )
-
-    // Сохранения токена в куки
-    setCookie(event, 'auth', token, {
-      httpOnly: false, // поменять на проде
-      path: '/',
-      maxAge: 60 * 60,
-      secure: false, // важно для localhost! True потом нужно поставить
-      sameSite: 'lax'
-    })
-
-    return { message: 'Logged in' }
-  } catch (err) {
-    console.error('Ошибка логина:', err)
-    throw createError({ statusCode: 500, message: 'Неверный логин или пароль' })
+  // Проверка логина/пароля
+  const body = await readBody(event)
+  const { username, password } = body || {}
+  if (!username || !password) {
+    throw createError({ statusCode: 400, message: 'Имя пользователя и пароль обязательны' })
   }
+
+  const admin = await prisma.admin.findUnique({ where: { username } })
+  if (!admin || !admin.hashed_password) {
+    throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
+  }
+
+  const isMatch = await bcrypt.compare(password, admin.hashed_password)
+  if (!isMatch) {
+    throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
+  }
+
+  loginAttempts.delete(ip)
+
+  const token = jwt.sign({ username: admin.username }, SECRET, { expiresIn: '7d' })
+
+  // Куки
+  const isProd = process.env.NODE_ENV === 'production'
+  setCookie(event, 'auth', token, {
+    httpOnly: true,
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+    secure: isProd,
+    sameSite: 'lax'
+  })
+
+  return { message: 'Logged in' }
 })
