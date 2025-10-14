@@ -1,25 +1,22 @@
 // server/middleware/auth.ts
-import { getCookie, sendRedirect } from 'h3'
 import jwt from 'jsonwebtoken'
+import { getCookie, sendRedirect } from 'h3'
 
 export default defineEventHandler((event) => {
-  const url = getRequestURL(event)
+  const config = useRuntimeConfig()
+  const secret = config.JWT_SECRET as string
 
-  // 🛡 Применяется ТОЛЬКО к /admin и вложенным маршрутам
+  // Применяем только к /admin
+  const url = getRequestURL(event)
   if (!/^\/admin(\/|$)/.test(url.pathname)) return
 
   const token = getCookie(event, 'auth')
-  const secret = process.env.JWT_SECRET
-
-  if (!token || !secret) {
-    return sendRedirect(event, '/login')
-  }
+  if (!token || !secret) return sendRedirect(event, '/login')
 
   try {
     const payload = jwt.verify(token, secret)
     event.context.user = payload
-  } catch (err) {
-    console.warn('Invalid JWT in server middleware:', err)
+  } catch {
     return sendRedirect(event, '/login')
   }
 })

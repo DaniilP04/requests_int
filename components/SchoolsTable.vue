@@ -97,7 +97,7 @@ const updateSchool = async () => {
 const deleteSchool = async () => {
   if (!editableSchool.value) return
   try {
-    await $fetch(`/api/delete-school?id=${editableSchool.value.id}`, {
+    await $fetch(`/api/schools.delete?id=${editableSchool.value.id}`, {
       method: 'DELETE'
     })
 

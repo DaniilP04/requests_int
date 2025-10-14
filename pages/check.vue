@@ -11,7 +11,7 @@
             <input type="text" id="password" placeholder='Введите пароль (8 символов)' 
             class="input_request" v-model="password" maxlength="8">
           </div>
-          <button class="button_admin bg-gray-800 hover:bg-gray-700" type="submit">Отследить</button>
+          <button class="button" type="submit">Отследить</button>
         </form>
           <p :class="statusResult === 'выполнен' ? 'text-green-500 font-semibold' : statusResult?.toLowerCase().includes('отклонен') ? 'text-center text-red-500 font-semibold mb-5' : 'text-gray-900 mb-5'">
             Ваш заказ {{ statusResult }}

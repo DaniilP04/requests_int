@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { prisma } from '~/server/utils/db'
+
 
 export default defineEventHandler(async (event) => {
   const id = Number(getQuery(event).id)

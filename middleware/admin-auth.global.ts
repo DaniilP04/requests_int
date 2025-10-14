@@ -1,31 +1,19 @@
+// middleware/admin-auth.global.ts (SSR-only проверка)
 export default defineNuxtRouteMiddleware(async (to) => {
-  const config = useRuntimeConfig()
-
-  // /login всегда открыт
-  if (to.path === '/login') return
-
-  // 🛡️ Применять только к маршрутам, начинающимся с /admin
   if (!to.path.startsWith('/admin')) return
+  if (!process.server) return
 
-  // Серверная проверка токена
-  if (process.server) {
-    const event = useRequestEvent()
-    const { getCookie } = await import('h3')
-    const { verify } = await import('jsonwebtoken')
+  const config = useRuntimeConfig()
+  const { getCookie } = await import('h3')
+  const jwt = (await import('jsonwebtoken')).default
 
-    const token = getCookie(event, 'auth')
-    if (!token) {
-      console.warn('[middleware] SSR: Токен отсутствует')
-      return navigateTo('/login')
-    }
+  const event = useRequestEvent()
+  const token = getCookie(event, 'auth')
 
-    try {
-      verify(token, config.JWT_SECRET)
-    } catch (err) {
-      console.warn('[middleware] SSR: Невалидный JWT:', err)
-      return navigateTo('/login')
-    }
+  if (!token) return navigateTo('/login')
+  try {
+    jwt.verify(token, config.JWT_SECRET as string)
+  } catch {
+    return navigateTo('/login')
   }
-
-  // ⚠️ клиентская проверка не нужна
 })

@@ -2,9 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    @apply font-roboto;
+    font-weight: 400;
+  }
+
+  strong, b {
+    @apply font-ptsans font-bold;
+  }
+}
+
 
 .bg_custom {
-    @apply bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px];
+    @apply bg-white;
 }
 
 .header_custom {
@@ -17,6 +28,10 @@
 
 .button_admin {
     @apply flex justify-center mx-auto mt-5 active:scale-95 transition-transform text-white rounded-xl p-2 mb-5 text-nowrap;
+}
+
+.button {
+    @apply p-3 mr-10 hover:bg-[#318fc6] text-white bg-[#3FB1F3] transition-transform active:scale-95 flex justify-center mx-auto mt-5 mb-5 text-nowrap
 }
 
 .div_request {

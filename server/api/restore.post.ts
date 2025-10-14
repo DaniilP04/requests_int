@@ -1,8 +1,8 @@
 // server/api/restore.ts
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '~/server/utils/db'
+
 import { defineEventHandler, readBody } from 'h3'
 
-const prisma = new PrismaClient()
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

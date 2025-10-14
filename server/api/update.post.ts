@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '~/server/utils/db'
 import axios from 'axios'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const prisma = new PrismaClient()
 const botToken = process.env.TELEGRAM_BOT_TOKEN
 
 // Сериализация телеграм айдишника так как он бигинт и просто так не может
@@ -42,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
   let messageText
   if (status.toLowerCase() === 'выполнен') {
-    messageText = `Статус заявки с трек-номером ${track_id} обновлён на "${status}".\nУстройство: ${deviceType}. \nЗабрать с 9:00 до 20:00 по адресу: адрес]`
+    messageText = `Статус заявки с трек-номером ${track_id} обновлён на "${status}".\nУстройство: ${deviceType}. \nЗабрать с 9:00 до 18:00(обед c 13:00 до 14:00) c пн по пт, 10:00–13:00 суббота, по адресу: ул. К. Сутюшева 53`
   } else {
     messageText = `Статус заявки с трек-номером ${track_id} обновлён на "${status}".\nУстройство: ${deviceType}`
   }
