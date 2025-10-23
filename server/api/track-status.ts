@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Проверка капчи
-  const secretKey = useRuntimeConfig().recaptchaSecretKey
+  const secretKey = useRuntimeConfig().RECAPTCHA_SECRET_KEY
 
   const recaptchaRes = await $fetch('https://www.google.com/recaptcha/api/siteverify', {
     method: 'POST',

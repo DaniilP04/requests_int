@@ -49,11 +49,7 @@ export default defineEventHandler(async (event) => {
 
   loginAttempts.delete(ip)
 
-<<<<<<< HEAD
   const token = jwt.sign({ username: admin.username }, config.JWT_SECRET as string, { expiresIn: '7d' })
-=======
-  const token = jwt.sign({ username: admin.username }, SECRET, { expiresIn: '7d' })
->>>>>>> 066e09377c901c98e33d6700bc358d477b5edef8
 
   // Куки
   const isProd = process.env.NODE_ENV === 'production'

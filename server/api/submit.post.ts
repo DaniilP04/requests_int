@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const token = body.token
-  const secretKey = useRuntimeConfig().recaptchaSecretKey
+  const secretKey = useRuntimeConfig().RECAPTCHA_SECRET_KEY
 
     interface RecaptchaResponse {
     success: boolean

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 console.log('/api/requests handler loaded')
-=======
->>>>>>> 066e09377c901c98e33d6700bc358d477b5edef8
 import { readBody, createError } from 'h3'
 import { prisma } from '~/server/utils/db'
 
@@ -87,40 +84,4 @@ export default defineEventHandler(async (event) => {
   // } else {
   //   console.log('reCAPTCHA bypass (dev)')
   }
-<<<<<<< HEAD
-=======
-
-  const minScore = process.env.NODE_ENV === 'production' ? 0.5 : 0.1
-  if (!res.success || (res.score ?? 0) < minScore) {
-    throw createError({ statusCode: 403, statusMessage: 'reCAPTCHA' })
-  }
-
-  // Проверка дубликатов — убедись в едином статусе
-  const existing = await prisma.requests.findFirst({
-    where: {
-      full_name: body.full_name,
-      school: body.school,
-      device_type: body.device_type,
-      status: 'Принято' // или 'В обработке' — выбери единый статус везде
-    }
-  })
-  if (existing) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: 'Заявка уже подана и находится в обработке.'
-    })
-  }
-
-  const request = await prisma.requests.create({
-    data: {
-      full_name: body.full_name,
-      school: body.school,
-      class: body.class,
-      device_type: body.device_type,
-      source: 'Сайт'
-    }
-  })
-
-  return { user: request }
->>>>>>> 066e09377c901c98e33d6700bc358d477b5edef8
 })
