@@ -6,11 +6,47 @@
         
         <div>
           <label for="surname" class="block text-sm font-medium text-gray-900 mb-2">Введите вашу фамилию</label>
-          <input type="text" id="surname" placeholder="Иванов" class="input_request w-full" v-model="postsurname" />
+          <input
+                type="text"
+                id="surname"
+                placeholder="Иванов"
+                class="input_request w-full"
+                v-model="postsurname"
+                :class="errSurname && 'border-red-500'"
+                @blur="validateSurname"
+                inputmode="text"
+                :pattern="NAME_RE.source"
+                title="Только русские/казахские буквы и дефис"
+          />
+          <p v-if="errSurname" class="text-xs text-red-600 mt-1">{{ errSurname }}</p>
           <label for="name" class="block text-sm font-medium text-gray-900 mb-2 mt-2">Введите ваше имя</label>
-          <input type="text" id="name" placeholder="Иван" class="input_request w-full" v-model="postname" />
+          <input
+                type="text"
+                id="name"
+                placeholder="Иван"
+                class="input_request w-full"
+                v-model="postname"
+                :class="errName && 'border-red-500'"
+                @blur="validateFirstName"
+                inputmode="text"
+                :pattern="NAME_RE.source"
+                title="Только русские/казахские буквы и дефис"
+          />
+          <p v-if="errName" class="text-xs text-red-600 mt-1">{{ errName }}</p>
           <label for="patro" class="block text-sm font-medium text-gray-900 mb-2 mt-2">Введите ваше отчество</label>
-          <input type="text" id="patro" placeholder="Иванович" class="input_request w-full" v-model="postpatronymic" />
+          <input
+                type="text"
+                id="patro"
+                placeholder="Иванович"
+                class="input_request w-full"
+                v-model="postpatronymic"
+                :class="errPatronymic && 'border-red-500'"
+                @blur="validatePatronymic"
+                inputmode="text"
+                :pattern="NAME_RE.source"
+                title="Только русские/казахские буквы и дефис"
+          />
+          <p v-if="errPatronymic" class="text-xs text-red-600 mt-1">{{ errPatronymic }}</p>
         </div>
 
         <div>
@@ -69,7 +105,26 @@
 
         <div v-else-if="role === 'student'">
           <label for="group" class="block text-sm font-medium text-gray-900 mb-2">Введите группу</label>
-          <input type="text" id="group" class="input_request w-full" placeholder="П-22" v-model="group" />
+          <input
+                type="text"
+                id="group"
+                class="input_request w-full"
+                placeholder="П-22, ISU(US)23-1"
+                v-model="group"
+                :class="errGroup && 'border-red-500'"
+                @blur="validateGroup"
+                :pattern="GROUP_RE.source"
+                title="Буквы, цифры, пробел, - _ ( ) / (2–32 символа)"
+          />
+          <p v-if="errGroup" class="text-xs text-red-600 mt-1">{{ errGroup }}</p>
+        </div>
+
+        <div v-else-if="role === 'staff'">
+          <label for="group" class="block text-sm font-medium text-gray-900 mb-2">Выберите подразделение</label>
+          <div class="flex flex-wrap gap-2">
+            <button v-for="department in staffDepartments" :key="department" type="button" class="rounded-xl border px-3 py-1 text-sm"
+              :class="staffGroup === department ? 'bg-gray-800 text-white' : ''" @click="staffGroup = department" >{{ department }}</button>
+          </div>
         </div>
 
     <div>
@@ -131,8 +186,45 @@
 
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch} from 'vue'
 import { useRuntimeConfig } from '#imports'
+
+// Разрешаем только рус/каз буквы + дефис, длина 2–50
+const NAME_RE = /^[А-ЯЁӘІҢҒҚӨҰҮҺа-яёәіңғқөұүһ\-]+$/u
+const GROUP_RE = /^[A-Za-zА-ЯЁӘІҢҒҚӨҰҮҺа-яёәіңғқөұүһ0-9()_\-\/ ]{2,32}$/u
+
+function validateNamePart(s: string) {
+  const v = (s || '').trim()
+  if (v.length < 2 || v.length > 50) return 'Должно быть от 2 до 50 символов'
+  if (!NAME_RE.test(v)) return 'Только русские/казахские буквы и дефис'
+  return '' // ок
+}
+
+function normalizeGroup(raw: string) {
+  return (raw || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+}
+
+// ошибки для инпутов
+const errSurname = ref('')
+const errName = ref('')
+const errPatronymic = ref('')
+const errGroup = ref('')
+
+// хелперы для onBlur
+function validateSurname() { errSurname.value = validateNamePart(postsurname.value) }
+function validateFirstName() { errName.value = validateNamePart(postname.value) }
+function validatePatronymic() {
+  const v = (postpatronymic.value || '').trim()
+  errPatronymic.value = v ? validateNamePart(v) : ''
+}
+function validateGroup() {
+  const v = normalizeGroup(group.value)
+  if (!v) { errGroup.value = 'Укажите группу'; return }
+  errGroup.value = GROUP_RE.test(v) ? '' : 'Можно: буквы, цифры, пробел, - _ ( ) / (2–32 симв.)'
+  group.value = v
+}
 
 // Переменные для работы капчи
 const recaptchaToken = ref<string>('')
@@ -181,8 +273,11 @@ const password = ref('')
 const track_id = ref<string | null>(null)
 const schools = ref<{ id: number, name: string, type: string }[]>([])
 const letters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ë', 'Ж', 'З', 'Ы']
-const productType = ref('')
+const productType = ref('Карта')
 const braceletColor = ref('')
+const staffGroup = ref('')
+const staffDepartments = ['Администрация', 'Пед. состав', 'Тех. персонал', 'Другое']
+
 
 
 // Переменные для модалок
@@ -209,7 +304,8 @@ const resetForm = () => {
   postschool.value = ''
   schoolSearch.value = ''
   postclass.value = ''
-  postdevice_type.value = 'Карта'
+  productType.value = 'Карта'
+  braceletColor.value = ''
   grade.value = ''
   letter.value = ''
   group.value = ''
@@ -222,8 +318,9 @@ const setRole = (value: typeof role.value) => {
   grade.value = ''
   letter.value = ''
   group.value = ''
+  staffGroup.value = ''
   postschool.value = ''
-  postclass.value = value === 'staff' ? 'Сотрудник' : ''
+  postclass.value = ''
 }
 
 // Выставление учебного заведения в зависимости от роли
@@ -243,15 +340,17 @@ onMounted(async () => {
 })
 
 // Установка класса в зависимости от роли
-watch([role, grade, letter, group], () => {
+watch([role, grade, letter, group, staffGroup], () => {
   if (role.value === 'school') {
     postclass.value = grade.value && letter.value ? `${grade.value}${letter.value}` : ''
   } else if (role.value === 'student') {
     postclass.value = group.value
   } else if (role.value === 'staff') {
-    postclass.value = 'Сотрудник'
+    postclass.value = staffGroup.value ? `Сотрудник: ${staffGroup.value}` : ''
+  } else {
+    postclass.value = ''
   }
-})
+}, { immediate: true }) 
 
 // Прогрузка капчи
 const loadRecaptcha = () => {
@@ -307,25 +406,28 @@ onMounted(async () => {
 
 // Отправка данных в базу
 const postData = async () => {
+  if (isLoading.value) return           
+
+  validateSurname(); validateFirstName(); validatePatronymic();
+  if (role.value === 'student' && typeof validateGroup === 'function') {
+    validateGroup()
+  }
+
+  if (errSurname.value || errName.value || (role.value === 'student' && errGroup?.value)) {
+    alert('Проверьте корректность полей')
+    return
+  }
+  isLoading.value = true                 
   try {
-    // Получение полного имени
     const postfull_name = computed(() => getFullName(postsurname.value, postname.value, postpatronymic.value))
-    // Проверка на заполнение всех полей
     if (!postfull_name.value || !postschool.value || !postclass.value || !postdevice_type.value) {
       alert('Пожалуйста, заполните все поля заявки')
       return
     }
-    isLoading.value = true
 
-    // Получение токена капчи
     const token = await executeRecaptcha('submit_form')
-    // console.log('reCAPTCHA token received:', token)
+    if (!token) throw new Error('Не удалось получить токен reCAPTCHA')
 
-    if (!token) {
-      throw new Error('Не удалось получить токен reCAPTCHA')
-    }
-
-    // Получение данных
     const response = await $fetch("/api/requests", {
       method: "POST",
       body: {
@@ -338,30 +440,23 @@ const postData = async () => {
       }
     })
 
-    // После подачи
     track_id.value = response.user.track_id
-    isLoading.value = false
-    showModal.value = true
     password.value = response.user.password
-    
-    // Перезагрузка формы
+    showModal.value = true
     resetForm()
-
-  } 
-  
-  // Обработка возможных ошибок
-  catch (error: any) {
-  console.error('Ошибка при отправке формы:', error)
-
-  if (error.statusCode === 403) {
-    alert('Ошибка проверки reCAPTCHA. Пожалуйста, попробуйте еще раз.')
-  } else if (error.statusCode === 409) {
-    alert('Ваша заявка уже подана и находится в обработке.')
-  } else {
-    alert('Произошла ошибка при отправке формы: ' + error.message)
+  } catch (error: any) {
+    console.error('Ошибка при отправке формы:', error)
+    if (error.statusCode === 403) {
+      alert('Ошибка проверки reCAPTCHA. Пожалуйста, попробуйте еще раз.')
+    } else if (error.statusCode === 409) {
+      alert('Ваша заявка уже подана и находится в обработке.')
+    } else {
+      alert('Произошла ошибка при отправке формы: ' + (error.message || 'Неизвестная ошибка'))
+    }
+  } finally {
+    isLoading.value = false              // ← критично: всегда выключаем спиннер
   }
-  }
-  }
+}
 
 // Копирование трек номера и пароля
 const copyTrackAndPassword = () => {

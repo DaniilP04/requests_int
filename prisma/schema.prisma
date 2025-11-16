@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model admin {
-  id              Int    @id @default(autoincrement())
-  username        String @unique
-  hashed_password String
-}
-
 model requests {
   id                 Int       @id @default(autoincrement())
   full_name          String
@@ -36,3 +30,14 @@ model schools {
   name String
   type String
 }
+
+model admin {
+  id              Int      @id @default(autoincrement())
+  username        String   @unique
+  hashed_password String
+  is_super        Boolean  @default(false)
+  createdAt       DateTime @default(now()) @map("created_at")  // <— маппинг на колонку created_at
+
+  @@map("admin")  // <— таблица в БД называется admin
+}
+

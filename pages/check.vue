@@ -13,10 +13,11 @@
           </div>
           <button class="button" type="submit">Отследить</button>
         </form>
-          <p :class="statusResult === 'выполнен' ? 'text-green-500 font-semibold' : statusResult?.toLowerCase().includes('отклонен') ? 'text-center text-red-500 font-semibold mb-5' : 'text-gray-900 mb-5'">
+          <p :class="statusResult?.toLowerCase().includes('выполнен') ? 'text-green-500 font-semibold' : statusResult?.toLowerCase().includes('выдан') ? 'text-green-500 font-semibold' :  statusResult?.toLowerCase().includes('отклонен') ? 'text-center text-red-500 font-semibold mb-5' : 'text-gray-900 mb-5'">
             Ваш заказ {{ statusResult }}
           </p>
-          <p v-if="statusResult === 'выполнен'" class="text-center text-green-500 text-sm mt-1 mb-5">Забрать его можно по адресу ул. Карима Сутюшева 53 в будние дни с 09:00 до 18:00</p>
+          <p v-if="statusResult?.toLowerCase().includes('выполнен')" class="text-center text-green-500 text-sm mt-1 mb-5">Забрать его можно по адресу ул. Карима Сутюшева 53 в будние дни с 09:00 до 18:00</p>
+          <p v-if="statusResult?.toLowerCase().includes('выдан')" class="text-center text-green-500 text-sm mb-5 ">Приятного пользования!</p>
       </div>
     </main>
 </template>

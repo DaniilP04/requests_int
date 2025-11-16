@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Имя пользователя и пароль обязательны' })
   }
 
-  const admin = await prisma.admin.findUnique({ where: { username } })
+  const admin = await prisma.admin.findUnique({ where: { username }, select: { id: true, username: true, hashed_password: true, is_super: true } })
   if (!admin || !admin.hashed_password) {
     throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
   }
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
   loginAttempts.delete(ip)
 
-  const token = jwt.sign({ username: admin.username }, config.JWT_SECRET as string, { expiresIn: '7d' })
+  const token = jwt.sign({ username: admin.username, is_super: admin.is_super}, config.JWT_SECRET as string, { expiresIn: '7d' })
 
   // Куки
   const isProd = process.env.NODE_ENV === 'production'

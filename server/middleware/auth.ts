@@ -1,22 +1,20 @@
 // server/middleware/auth.ts
 import jwt from 'jsonwebtoken'
-import { getCookie, sendRedirect } from 'h3'
+import { getCookie } from 'h3'
 
 export default defineEventHandler((event) => {
-  const config = useRuntimeConfig()
-  const secret = config.JWT_SECRET as string
+  const { pathname } = getRequestURL(event)
+  // нам нужен user для /admin и /api (без редиректов в API)
+  if (!/^\/(admin|api)(\/|$)/.test(pathname)) return
 
-  // Применяем только к /admin
-  const url = getRequestURL(event)
-  if (!/^\/admin(\/|$)/.test(url.pathname)) return
-
+  const secret = useRuntimeConfig().JWT_SECRET as string
   const token = getCookie(event, 'auth')
-  if (!token || !secret) return sendRedirect(event, '/login')
+  if (!token || !secret) return
 
   try {
     const payload = jwt.verify(token, secret)
-    event.context.user = payload
+    ;(event as any).context.user = payload
   } catch {
-    return sendRedirect(event, '/login')
+    // просто не назначаем user — эндпоинты сами вернут 401, где нужно
   }
 })

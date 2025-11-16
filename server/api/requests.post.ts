@@ -1,6 +1,6 @@
-console.log('/api/requests handler loaded')
 import { readBody, createError } from 'h3'
 import { prisma } from '~/server/utils/db'
+import { normalize, validateNamePart, titleCaseNamePart } from '~/server/utils/validators'
 
 interface RecaptchaResponse {
   success: boolean
@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
     const cfg = useRuntimeConfig()
     const body = await readBody(event)
 
+    // ---- reCAPTCHA (как было) ----
     const token = body?.token as string | undefined
     if (!token) throw createError({ statusCode: 400, statusMessage: 'No reCAPTCHA token' })
 
@@ -38,32 +39,68 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 403, statusMessage: 'reCAPTCHA' })
     }
 
-    const existing = await prisma.requests.findFirst({
+    // ---- Нормализация и валидация ФИО ----
+    const full_name_raw = normalize(String(body.full_name ?? ''))
+    const parts = full_name_raw.split(' ').filter(Boolean) // [Фамилия, Имя, (Отчество)?]
+    if (parts.length < 2) {
+      throw createError({ statusCode: 400, statusMessage: 'Укажите фамилию и имя' })
+    }
+    const [surname, name, ...rest] = parts
+    const patronymic = normalize(rest.join(' '))
+
+    const errSurname = validateNamePart(surname)
+    const errName = validateNamePart(name)
+    const errPatro = patronymic ? validateNamePart(patronymic) : ''
+    if (errSurname || errName || errPatro) {
+      throw createError({ statusCode: 400, statusMessage: 'Некорректное ФИО' })
+    }
+
+    const surnameT    = titleCaseNamePart(surname)
+    const nameT       = titleCaseNamePart(name)
+    const patronymicT = patronymic ? titleCaseNamePart(patronymic) : ''
+
+    const full_name   = [surnameT, nameT, patronymicT].filter(Boolean).join(' ')
+
+    // ---- Остальные поля + нормализация ----
+    const school = normalize(String(body.school ?? ''))
+    const klass  = normalize(String(body.class ?? ''))
+    const device = normalize(String(body.device_type ?? ''))
+
+    if (!school || !klass || !device) {
+      throw createError({ statusCode: 400, statusMessage: 'Не все поля заполнены' })
+    }
+
+    // ---- Проверка на активный дубликат (full_name+school+class, регистронезависимо) ----
+    const activeDuplicate = await prisma.requests.findFirst({
       where: {
-        full_name: body.full_name,
-        school: body.school,
-        device_type: body.device_type,
-        status: 'Принято' 
-      }
+        deleted: false,
+        full_name: { equals: full_name, mode: 'insensitive' },
+        school:    { equals: school,    mode: 'insensitive' },
+        class:     { equals: klass,     mode: 'insensitive' },
+        status:    { in: ['Принято', 'В обработке', 'Готово к выдаче'] }
+      },
+      select: { id: true }
     })
-    if (existing) {
+    if (activeDuplicate) {
       throw createError({
         statusCode: 409,
-        statusMessage: 'Заявка уже подана и находится в обработке.'
+        statusMessage: 'Ваша заявка уже подана и находится в обработке.'
       })
     }
 
-    const request = await prisma.requests.create({
+    // ---- Создание и возврат track_id + password (генерит БД) ----
+    const created = await prisma.requests.create({
       data: {
-        full_name: body.full_name,
-        school: body.school,
-        class: body.class,
-        device_type: body.device_type,
+        full_name,
+        school,
+        class: klass,
+        device_type: device,
         source: 'Сайт'
-      }
+      },
+      select: { track_id: true, password: true }
     })
 
-    return { user: request }
+    return { user: { track_id: created.track_id, password: created.password } }
 
   } catch (error: any) {
     console.error(' API POST /api/requests error!')
@@ -71,7 +108,6 @@ export default defineEventHandler(async (event) => {
     console.error('Message:', error?.message)
     console.error('Stack:', error?.stack)
     console.error('Cause:', error?.cause)
-
     if (error?.code) console.error('→ Prisma error code:', error.code)
     if (error?.meta) console.error('→ Prisma meta:', error.meta)
 
@@ -79,9 +115,5 @@ export default defineEventHandler(async (event) => {
       statusCode: error.statusCode || 500,
       statusMessage: error.statusMessage || error.message || 'Internal Server Error'
     })
-
-  //   console.log('reCAPTCHA verify:', res)
-  // } else {
-  //   console.log('reCAPTCHA bypass (dev)')
   }
 })

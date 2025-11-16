@@ -163,10 +163,14 @@ const closeModal = () => {
           : 'Нет'
         }}
       </td>
-      <td class="px-4 py-3 text-center border">
+      <td class="px-4 text-center border">
         <div class="flex justify-center gap-1">
+          <button class="button_admin bg-[#8fcef3] hover:bg-[#5ebef6] w-10"
+            @click="updateStatus(request.track_id, 'Выдан')">
+            <img src="/img/deliver.svg" alt="Выдан" />
+          </button>
           <button class="button_admin bg-green-400 hover:bg-green-500 w-10"
-            @click="updateStatus(request.track_id, 'выполнен')">
+            @click="updateStatus(request.track_id, 'Выполнен')">
             <img src="/img/check.svg" alt="Принять" />
           </button>
           <button class="button_admin bg-red-400 hover:bg-red-500 w-10"

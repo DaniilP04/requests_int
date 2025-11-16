@@ -13,6 +13,7 @@
         <option value="DataTable" selected>Заявки</option>
         <option value="SchoolsTable">Учебные заведения</option>
         <option value="DeletedTable">Удалённые заявки</option>
+        <option value="AdminsTable" v-if="me?.is_super">Пользователи (супер)</option>
       </select>
     </form>
 
@@ -28,6 +29,11 @@
     <div class="flex" v-if = "selectus == 'DeletedTable'">
     <DeletedTable :requests="deletedRequests" @restored="handleRestoreRequest" />
     </div>
+
+    <div class="flex" v-if="selectus === 'AdminsTable' && me?.is_super">
+    <AdminsTable />
+    </div>
+
 
   </main>
 </template>
@@ -104,6 +110,17 @@ function handleRestoreRequest(restoredRequest) {
     requests.value.unshift(restoredRequest)
   }
 }
+
+import AdminsTable from '~/components/AdminsTable.vue'
+const me = ref<{ id:number; username:string; is_super:boolean } | null>(null)
+
+onMounted(async () => {
+  try { me.value = (await $fetch('/api/me')).user } catch {}
+  fetchRequests()
+  fetchSchools()
+  fetchDeletedRequests()
+})
+
 
 
 </script>
