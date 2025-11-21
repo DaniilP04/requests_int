@@ -8,14 +8,14 @@
         <img
           src="/img/logo.jpg"
           alt="Лого"
-          class="h-10 w-auto object-contain"
+          class="h-11 w-auto object-contain"
         />
       </NuxtLink>
 
       <div class="absolute left-1/2 transform -translate-x-1/2">
         <NuxtLink
           to="/"
-          class="select-none uppercase tracking-[0.1em] font-semibold text-slate-800 hover:text-gray-500 transition-colors max-sm:hidden"
+          class="select-none uppercase tracking-[0.1em] text-slate-800 hover:text-gray-500 transition-colors max-sm:hidden"
         >
           На главную
         </NuxtLink>

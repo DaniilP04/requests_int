@@ -1,6 +1,6 @@
 <template>
   <main class="items-center mt-20 z-10 h-full w-full flex flex-col justify-center">
-    <div class="border-gray-900 border-2 rounded-2xl flex flex-col justify-center items-center px-6 py-8 w-full max-w-lg mx-auto">
+    <div class="border-0 sm:border-2 sm:border-gray-800 sm:border-opacity-40  rounded-2xl flex flex-col justify-center items-center px-6 py-8 w-full max-w-lg mx-auto">
       <p class="text-2xl text-gray-900 mb-6">Заявка</p>
       <form class="w-full space-y-5" @submit.prevent="postData">
         
