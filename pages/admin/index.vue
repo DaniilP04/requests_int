@@ -2,7 +2,7 @@
     <header class="bg_custom header_custom">
     <div class="max-w-7xl mx-auto flex justify-between items-center px-4 py-8">
       <nav class="transition-all duration-300 sm:flex sm:items-center sm:space-x-8">
-        <button @click="logout" class="text-gray-900 font-bold">Выйти</button>
+        <button @click="logout" class="text-gray-900">Выйти</button>
       </nav> 
     </div>
   </header>

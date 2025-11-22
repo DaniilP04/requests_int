@@ -1,7 +1,7 @@
 <template>
     <main class='bg_custom min-h-screen items-center z-10 flex flex-col justify-center'>
-      <div class="div_request m-5 h-2/6 max-sm:h-5/6">
-        <p class="mt-5 font-bold text-gray-900 mb-5">Проверить статус заявки</p>
+      <div class="div_request m-5 h-2/6 max-sm:h-5/6 mb-96">
+        <p class="mt-5 text-gray-900 mb-5">Проверить статус заявки</p>
         <form @submit.prevent='trackRequest'>
           <div class="mb-5">
             <input  type="text" id="track_id" placeholder='Введите трек-номер (12 символов)' 
@@ -14,7 +14,7 @@
           <button class="button" type="submit">Отследить</button>
         </form>
           <p :class="statusResult?.toLowerCase().includes('выполнен') ? 'text-green-500 font-semibold' : statusResult?.toLowerCase().includes('выдан') ? 'text-green-500 font-semibold' :  statusResult?.toLowerCase().includes('отклонен') ? 'text-center text-red-500 font-semibold mb-5' : 'text-gray-900 mb-5'">
-            Ваш заказ {{ statusResult }}
+            Статус вашего заказа: {{ statusResult }}
           </p>
           <p v-if="statusResult?.toLowerCase().includes('выполнен')" class="text-center text-green-500 text-sm mt-1 mb-5">Забрать его можно по адресу ул. Карима Сутюшева 53 в будние дни с 09:00 до 18:00</p>
           <p v-if="statusResult?.toLowerCase().includes('выдан')" class="text-center text-green-500 text-sm mb-5 ">Приятного пользования!</p>
