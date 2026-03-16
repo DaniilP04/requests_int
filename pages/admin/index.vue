@@ -13,7 +13,9 @@
         <option value="DataTable" selected>Заявки</option>
         <option value="SchoolsTable">Учебные заведения</option>
         <option value="DeletedTable">Удалённые заявки</option>
+        <option value="SalesReportTable">Отчёт (Выдано)</option>
         <option value="AdminsTable" v-if="me?.is_super">Пользователи (супер)</option>
+        <option value="ProductsPricesTable" v-if="me?.is_super">Цены товаров</option>
       </select>
     </form>
 
@@ -29,9 +31,17 @@
     <div class="flex" v-if = "selectus == 'DeletedTable'">
     <DeletedTable :requests="deletedRequests" @restored="handleRestoreRequest" />
     </div>
+    
+    <div class="flex" v-if="selectus === 'SalesReportTable'">
+    <SalesReportTable />
+    </div>
 
     <div class="flex" v-if="selectus === 'AdminsTable' && me?.is_super">
     <AdminsTable />
+    </div>
+
+    <div class="flex" v-if="selectus === 'ProductsPricesTable' && me?.is_super">
+    <ProductsPricesTable />
     </div>
 
 
@@ -120,6 +130,9 @@ onMounted(async () => {
   fetchSchools()
   fetchDeletedRequests()
 })
+
+import SalesReportTable from '~/components/SalesReportTable.vue'
+import ProductsPricesTable from '~/components/ProductsPricesTable.vue'
 
 
 

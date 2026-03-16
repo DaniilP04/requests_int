@@ -165,22 +165,34 @@ const closeModal = () => {
       </td>
       <td class="px-4 text-center border">
         <div class="flex justify-center gap-1">
-          <button class="button_admin bg-[#8fcef3] hover:bg-[#5ebef6] w-10"
-            @click="updateStatus(request.track_id, 'Выдан')">
-            <img src="/img/deliver.svg" alt="Выдан" />
-          </button>
-          <button class="button_admin bg-green-400 hover:bg-green-500 w-10"
-            @click="updateStatus(request.track_id, 'Выполнен')">
-            <img src="/img/check.svg" alt="Принять" />
-          </button>
-          <button class="button_admin bg-red-400 hover:bg-red-500 w-10"
-            @click="openRejectModal(request.track_id)">
-            <img src="/img/cross.svg" alt="Отклонить" />
-          </button>
-          <button class="button_admin bg-gray-300 hover:bg-gray-400 w-10"
-            @click="deleteRequest(request.track_id)">
-            <img src="/img/bin.svg" alt="Удалить" />
-          </button>
+          <div class="tooltip">
+            <button class="button_admin bg-[#8fcef3] hover:bg-[#5ebef6] w-10"
+              @click="updateStatus(request.track_id, 'Выдан')">
+              <img src="/img/deliver.svg" alt="Выдан" />
+            </button>
+            <span class="tooltip-text">Выдан</span>
+            </div>
+            <div class="tooltip">
+            <button class="button_admin bg-green-400 hover:bg-green-500 w-10"
+              @click="updateStatus(request.track_id, 'Выполнен')">
+              <img src="/img/check.svg" alt="Принять" />
+            </button>
+            <span class="tooltip-text">Выполнен</span>
+            </div>
+            <div class="tooltip">
+            <button class="button_admin bg-red-400 hover:bg-red-500 w-10"
+              @click="openRejectModal(request.track_id)">
+              <img src="/img/cross.svg" alt="Отклонить" />
+            </button>
+            <span class="tooltip-text">Отклонить</span>
+            </div>
+            <div class="tooltip">
+            <button class="button_admin bg-gray-300 hover:bg-gray-400 w-10"
+              @click="deleteRequest(request.track_id)">
+              <img src="/img/bin.svg" alt="Удалить" />
+            </button>
+            <span class="tooltip-text">Удалить</span>
+            </div>
         </div>
       </td>
     </tr>

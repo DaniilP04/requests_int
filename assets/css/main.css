@@ -46,3 +46,18 @@
    @apply bg-gray-50 border border-gray-800 text-gray-900 text-sm rounded-lg block w-full p-2.5;
 }
 
+.tooltip {
+    @apply relative inline-block;
+  }
+
+.tooltip-text {
+    @apply pointer-events-none absolute left-1/2 bottom-full z-10 mb-2
+           -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-lg
+           bg-gray-900 px-3 py-1.5 text-sm text-white
+           opacity-0 shadow-lg transition-all duration-200;
+  }
+
+.tooltip:hover .tooltip-text {
+    @apply translate-y-0 opacity-100;
+  }
+

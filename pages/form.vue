@@ -128,11 +128,11 @@
         </div>
 
     <div>
-      <label for="products" class="block text-sm font-medium text-gray-900 mb-2">Выберите продукт</label>
+      <label for="products" class="block text-sm font-medium text-gray-900 mb-2">Выберите устройство доступа</label>
       <select id="products" class="select_request w-full" v-model="productType">
-        <option value="Карта">Карта (900 тенге)</option>
-        <option value="Браслет">Браслет (1300 тенге)</option>
-        <option value="Брелок">Брелок (1700 тенге)</option>
+        <option v-for="p in products" :key="p.code" :value="p.name">
+          {{ p.name }} ({{ p.price }} тенге)
+        </option>
       </select>
 
       <div v-if="productType === 'Браслет'" class="mt-2">
@@ -273,7 +273,7 @@ const password = ref('')
 const track_id = ref<string | null>(null)
 const schools = ref<{ id: number, name: string, type: string }[]>([])
 const letters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ë', 'Ж', 'З', 'Ы']
-const productType = ref('Карта')
+const productType = ref('')
 const braceletColor = ref('')
 const staffGroup = ref('')
 const staffDepartments = ['Администрация', 'Пед. состав', 'Тех. персонал', 'Другое']
@@ -337,6 +337,24 @@ const filteredSchools = computed(() => {
 onMounted(async () => {
   const res = await $fetch('/api/all-schools')
   schools.value = res.schools
+})
+
+type Product = { code: string; name: string; price: number }
+const products = ref<Product[]>([])
+const pricesMap = computed(() => Object.fromEntries(products.value.map(p => [p.name, p.price])))
+
+onMounted(async () => {
+  const res = await $fetch('/api/all-schools')
+  schools.value = res.schools
+})
+
+onMounted(async () => {
+  const res = await $fetch<{ products: Product[] }>('/api/products')
+  products.value = res.products
+  // если productType пустой или не существует в списке — ставим первый
+  if (!productType.value && products.value.length) {
+    productType.value = products.value[0].name
+  }
 })
 
 // Установка класса в зависимости от роли
@@ -512,4 +530,5 @@ body {
   z-index: 9999 !important;
   pointer-events: all !important;
 }
+
 </style>

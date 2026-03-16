@@ -36,8 +36,16 @@ model admin {
   username        String   @unique
   hashed_password String
   is_super        Boolean  @default(false)
-  createdAt       DateTime @default(now()) @map("created_at")  // <— маппинг на колонку created_at
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@map("admin")  // <— таблица в БД называется admin
+  @@map("admin")
 }
 
+model products {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  name       String
+  price      Int
+  is_active  Boolean  @default(true)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
