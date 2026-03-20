@@ -226,14 +226,32 @@ const closeModal = () => {
         : 'Нет'
       }}
     </div>
-    <div class="flex justify-center gap-2 mt-5">
-      <button @click="updateStatus(request.track_id, 'выполнен')" class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-nowrap">
+    <div class="grid grid-cols-2 gap-2 mt-5">
+      <button
+        @click="updateStatus(request.track_id, 'Выдан')"
+        class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-sm"
+      >
+        Выдан
+      </button>
+
+      <button
+        @click="updateStatus(request.track_id, 'Выполнен')"
+        class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-sm"
+      >
         Выполнено
       </button>
-      <button @click="openRejectModal(request.track_id)" class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-nowrap">
+
+      <button
+        @click="openRejectModal(request.track_id)"
+        class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-sm"
+      >
         Отклонить
       </button>
-      <button @click="deleteRequest(request.track_id)" class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-nowrap">
+
+      <button
+        @click="deleteRequest(request.track_id)"
+        class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-sm"
+      >
         Удалить
       </button>
     </div>

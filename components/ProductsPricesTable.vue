@@ -1,11 +1,16 @@
 <template>
-  <section class="w-full max-w-3xl mx-auto space-y-4">
+  <section class="w-full max-w-3xl mx-auto px-3 sm:px-4 space-y-4">
     <h2 class="text-xl font-bold">Цены товаров</h2>
 
-    <p v-if="error" class="text-red-600">{{ error }}</p>
-    <p v-if="success" class="text-green-600">{{ success }}</p>
+    <p v-if="error" class="text-red-600 text-sm sm:text-base break-words">
+      {{ error }}
+    </p>
+    <p v-if="success" class="text-green-600 text-sm sm:text-base break-words">
+      {{ success }}
+    </p>
 
-    <div class="overflow-x-auto">
+    <!-- Десктоп / планшет -->
+    <div class="hidden sm:block overflow-x-auto">
       <table class="min-w-full text-sm border">
         <thead class="bg-gray-100">
           <tr>
@@ -36,10 +41,54 @@
           </tr>
 
           <tr v-if="products.length === 0">
-            <td colspan="4" class="p-3 text-center text-gray-500">Нет товаров</td>
+            <td colspan="4" class="p-3 text-center text-gray-500">
+              Нет товаров
+            </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Мобильная версия -->
+    <div class="sm:hidden space-y-4">
+      <div
+        v-for="p in products"
+        :key="'mobile-' + p.code"
+        class="bg-white shadow border rounded-lg p-4"
+      >
+        <div class="mb-2 break-all">
+          <strong>Код:</strong>
+          <span class="font-mono">{{ p.code }}</span>
+        </div>
+
+        <div class="mb-2 break-words">
+          <strong>Название:</strong> {{ p.name }}
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-sm font-semibold mb-1">Цена (₸)</label>
+          <input
+            type="number"
+            min="0"
+            class="w-full border p-2 rounded"
+            v-model.number="prices[p.code]"
+          />
+        </div>
+
+        <button
+          class="w-full border px-3 py-2 rounded"
+          @click="save(p.code)"
+        >
+          Сохранить
+        </button>
+      </div>
+
+      <div
+        v-if="products.length === 0"
+        class="p-4 text-center text-gray-500 border rounded-lg bg-white"
+      >
+        Нет товаров
+      </div>
     </div>
   </section>
 </template>
