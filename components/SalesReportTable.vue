@@ -1,50 +1,82 @@
 <template>
-  <section class="w-full max-w-4xl mx-auto space-y-4">
-    <h2 class="text-xl font-bold">Отчёт по выданным товарам</h2>
+  <section class="w-full max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
+    <h2 class="text-lg sm:text-xl md:text-2xl font-bold leading-tight">
+      Отчёт по выданным товарам
+    </h2>
 
-    <div class="flex flex-wrap gap-2 items-end">
-      <div>
-        <label class="block text-sm">С</label>
-        <input type="date" v-model="from" class="border p-2 rounded" />
-      </div>
-      <div>
-        <label class="block text-sm">По</label>
-        <input type="date" v-model="to" class="border p-2 rounded" />
+    <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 sm:items-end">
+      <div class="w-full sm:w-auto">
+        <label class="block text-sm mb-1">С</label>
+        <input
+          type="date"
+          v-model="from"
+          class="w-full sm:w-auto border rounded px-3 py-2 text-sm"
+        />
       </div>
 
-      <button class="border px-3 py-2 rounded" @click="setToday">Сегодня</button>
-      <button class="border px-3 py-2 rounded" @click="setLast7">Последние 7 дней</button>
-      <button class="border px-3 py-2 rounded font-semibold" @click="load">Посчитать</button>
+      <div class="w-full sm:w-auto">
+        <label class="block text-sm mb-1">По</label>
+        <input
+          type="date"
+          v-model="to"
+          class="w-full sm:w-auto border rounded px-3 py-2 text-sm"
+        />
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <button
+          class="border px-3 py-2 rounded text-sm w-full sm:w-auto"
+          @click="setToday"
+        >
+          Сегодня
+        </button>
+        <button
+          class="border px-3 py-2 rounded text-sm w-full sm:w-auto"
+          @click="setLast7"
+        >
+          Последние 7 дней
+        </button>
+        <button
+          class="border px-3 py-2 rounded font-semibold text-sm w-full sm:w-auto"
+          @click="load"
+        >
+          Посчитать
+        </button>
+      </div>
     </div>
 
-    <p v-if="error" class="text-red-600">{{ error }}</p>
+    <p v-if="error" class="text-red-600 text-sm sm:text-base break-words">
+      {{ error }}
+    </p>
 
-    <div class="overflow-x-auto" v-if="items.length">
-      <table class="min-w-full text-sm border">
+    <div class="overflow-x-auto rounded-lg border" v-if="items.length">
+      <table class="min-w-full text-xs sm:text-sm border-collapse">
         <thead class="bg-gray-100">
           <tr>
-            <th class="p-2 border">Товар</th>
-            <th class="p-2 border">Цена</th>
-            <th class="p-2 border">Кол-во (Выдан)</th>
-            <th class="p-2 border">Сумма</th>
+            <th class="p-2 sm:p-3 border text-left">Товар</th>
+            <th class="p-2 sm:p-3 border text-left whitespace-nowrap">Цена</th>
+            <th class="p-2 sm:p-3 border text-left whitespace-nowrap">Кол-во (Выдан)</th>
+            <th class="p-2 sm:p-3 border text-left whitespace-nowrap">Сумма</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="i in items" :key="i.product">
-            <td class="p-2 border">{{ i.product }}</td>
-            <td class="p-2 border">{{ i.price }} ₸</td>
-            <td class="p-2 border">{{ i.count }}</td>
-            <td class="p-2 border font-semibold">{{ i.sum }} ₸</td>
+            <td class="p-2 sm:p-3 border">{{ i.product }}</td>
+            <td class="p-2 sm:p-3 border whitespace-nowrap">{{ i.price }} ₸</td>
+            <td class="p-2 sm:p-3 border">{{ i.count }}</td>
+            <td class="p-2 sm:p-3 border font-semibold whitespace-nowrap">{{ i.sum }} ₸</td>
           </tr>
           <tr>
-            <td class="p-2 border font-bold" colspan="3">Итого</td>
-            <td class="p-2 border font-bold">{{ total }} ₸</td>
+            <td class="p-2 sm:p-3 border font-bold" colspan="3">Итого</td>
+            <td class="p-2 sm:p-3 border font-bold whitespace-nowrap">{{ total }} ₸</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p v-else class="text-gray-600">Нет выданных товаров за выбранный период.</p>
+    <p v-else class="text-gray-600 text-sm sm:text-base">
+      Нет выданных товаров за выбранный период.
+    </p>
   </section>
 </template>
 
