@@ -400,6 +400,8 @@ const showRecaptchaBadge = () => {
   const badge = document.querySelector('.grecaptcha-badge')
   if (badge) {
     const style = badge.style
+    style.setProperty('left', '0', 'important')
+    style.setProperty('right', 'auto', 'important')
     style.setProperty('visibility', 'visible', 'important')
     style.setProperty('opacity', '1', 'important')
     style.setProperty('transition', 'none', 'important')
@@ -524,6 +526,8 @@ body {
 
 /* Показ значка капчи */
 .grecaptcha-badge {
+  left: 0 !important;
+  right: auto !important;
   visibility: visible !important;
   opacity: 1 !important;
   transition: none !important;

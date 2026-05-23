@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
     JWT_SECRET: process.env.JWT_SECRET,
     RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     public: {
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY || ''
     }
