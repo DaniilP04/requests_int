@@ -1,3 +1,10 @@
+<script setup>
+const route = useRoute()
+
+const pagesWithChat = ['/', '/form', '/check']
+const showChatBot = computed(() => pagesWithChat.includes(route.path))
+</script>
+
 <template>
   <div class="h-2 bg-slate-800"></div>
 
@@ -27,5 +34,6 @@
 
   <main class="bg-white">
     <slot />
+    <FloatingChatBot v-if="showChatBot" />
   </main>
 </template>

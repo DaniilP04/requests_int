@@ -1,86 +1,93 @@
 <template>
-  <main class="items-center mt-20 z-10 h-full w-full flex flex-col justify-center">
-    <div class="border-0 sm:border-2 sm:border-gray-800 sm:border-opacity-40  rounded-2xl flex flex-col justify-center items-center px-6 py-8 w-full max-w-lg mx-auto">
-      <p class="text-2xl text-gray-900 mb-6">Заявка</p>
-      <form class="w-full space-y-5" @submit.prevent="postData">
-        
+  <main class="bg_custom relative z-10 flex min-h-[calc(100vh-5rem)] w-full items-center justify-center px-4 py-6 sm:px-6 lg:py-8">
+    <form class="w-full max-w-xl overflow-hidden rounded-sm bg-white shadow-2xl shadow-slate-200/80 ring-1 ring-slate-200/70" @submit.prevent="postData">
+      <header class="px-5 py-7 sm:px-10 sm:py-9">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Заявка на устройство доступа</h1>
+        <p class="mt-2 text-sm font-medium text-slate-500">Заполните данные ниже, чтобы отправить заявку.</p>
+      </header>
+
+      <div class="relative h-px bg-slate-200">
+        <div class="absolute left-5 top-0 h-px w-24 bg-[#3FB1F3] sm:left-10"></div>
+      </div>
+
+      <section class="space-y-5 px-5 py-6 sm:px-10 sm:py-8">
         <div>
-          <label for="surname" class="block text-sm font-medium text-gray-900 mb-2">Введите вашу фамилию</label>
+          <label for="surname" class="mb-2 block text-sm font-semibold text-slate-900">Введите вашу фамилию</label>
           <input
-                type="text"
-                id="surname"
-                placeholder="Иванов"
-                class="input_request w-full"
-                v-model="postsurname"
-                :class="errSurname && 'border-red-500'"
-                @blur="validateSurname"
-                inputmode="text"
-                :pattern="NAME_RE.source"
-                title="Только русские/казахские буквы и дефис"
+            type="text"
+            id="surname"
+            placeholder="Иванов"
+            class="input_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10"
+            v-model="postsurname"
+            :class="errSurname && 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10'"
+            @blur="validateSurname"
+            inputmode="text"
+            :pattern="NAME_RE.source"
+            title="Только русские/казахские буквы и дефис"
           />
-          <p v-if="errSurname" class="text-xs text-red-600 mt-1">{{ errSurname }}</p>
-          <label for="name" class="block text-sm font-medium text-gray-900 mb-2 mt-2">Введите ваше имя</label>
+          <p v-if="errSurname" class="mt-1 text-xs text-red-600">{{ errSurname }}</p>
+
+          <label for="name" class="mb-2 mt-3 block text-sm font-semibold text-slate-900">Введите ваше имя</label>
           <input
-                type="text"
-                id="name"
-                placeholder="Иван"
-                class="input_request w-full"
-                v-model="postname"
-                :class="errName && 'border-red-500'"
-                @blur="validateFirstName"
-                inputmode="text"
-                :pattern="NAME_RE.source"
-                title="Только русские/казахские буквы и дефис"
+            type="text"
+            id="name"
+            placeholder="Иван"
+            class="input_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10"
+            v-model="postname"
+            :class="errName && 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10'"
+            @blur="validateFirstName"
+            inputmode="text"
+            :pattern="NAME_RE.source"
+            title="Только русские/казахские буквы и дефис"
           />
-          <p v-if="errName" class="text-xs text-red-600 mt-1">{{ errName }}</p>
-          <label for="patro" class="block text-sm font-medium text-gray-900 mb-2 mt-2">Введите ваше отчество</label>
+          <p v-if="errName" class="mt-1 text-xs text-red-600">{{ errName }}</p>
+
+          <label for="patro" class="mb-2 mt-3 block text-sm font-semibold text-slate-900">Введите ваше отчество</label>
           <input
-                type="text"
-                id="patro"
-                placeholder="Иванович"
-                class="input_request w-full"
-                v-model="postpatronymic"
-                :class="errPatronymic && 'border-red-500'"
-                @blur="validatePatronymic"
-                inputmode="text"
-                :pattern="NAME_RE.source"
-                title="Только русские/казахские буквы и дефис"
+            type="text"
+            id="patro"
+            placeholder="Иванович"
+            class="input_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10"
+            v-model="postpatronymic"
+            :class="errPatronymic && 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10'"
+            @blur="validatePatronymic"
+            inputmode="text"
+            :pattern="NAME_RE.source"
+            title="Только русские/казахские буквы и дефис"
           />
-          <p v-if="errPatronymic" class="text-xs text-red-600 mt-1">{{ errPatronymic }}</p>
+          <p v-if="errPatronymic" class="mt-1 text-xs text-red-600">{{ errPatronymic }}</p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-900 mb-2">Выберите вашу роль</label>
-          <div class="flex gap-2">
-            <button type="button" class="flex-1 border border-gray-800 text-gray-900 text-sm rounded-lg py-2" :class="role === 'school' && 'bg-gray-800 text-white'" @click="setRole('school')">Школьник</button>
-            <button type="button" class="flex-1 border border-gray-800 text-gray-900 text-sm rounded-lg py-2" :class="role === 'student' && 'bg-gray-800 text-white'" @click="setRole('student')">Студент</button>
-            <button type="button" class="flex-1 border border-gray-800 text-gray-900 text-sm rounded-lg py-2" :class="role === 'staff' && 'bg-gray-800 text-white'" @click="setRole('staff')">Сотрудник</button>
+          <label class="mb-2 block text-sm font-semibold text-slate-900">Выберите вашу роль</label>
+          <div class="grid grid-cols-3 gap-2 rounded-md bg-slate-100 p-1">
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'school' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('school')">Школьник</button>
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'student' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('student')">Студент</button>
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'staff' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('staff')">Сотрудник</button>
           </div>
         </div>
 
         <div>
-          <label for="school" class="block text-sm font-medium text-gray-900 mb-2">Выберите учебное заведение</label>
+          <label for="school" class="mb-2 block text-sm font-semibold text-slate-900">Выберите учебное заведение</label>
 
-          <div v-if="postschool">
-            <div class="flex items-center justify-between border px-3 py-2 rounded bg-gray-100">
-              <span>{{ postschool }}</span>
-              <button type="button" @click="cancelSchool" class="text-sm text-gray-900 hover:underline">Отменить</button>
-            </div>
+          <div v-if="postschool" class="flex items-center justify-between gap-3 rounded-md bg-slate-100 px-3 py-2.5 text-sm">
+            <span class="min-w-0 break-words text-slate-900">{{ postschool }}</span>
+            <button type="button" @click="cancelSchool" class="shrink-0 font-semibold text-slate-500 hover:text-slate-900">Отменить</button>
           </div>
 
           <div v-else>
             <input
               type="text"
               id="school"
-              class="input_request w-full"
+              class="input_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10"
               placeholder="Поиск учебных заведений"
               v-model="schoolSearch"
             />
-            <div class="max-h-40 overflow-y-auto border rounded mt-2">
+            <div class="mt-2 max-h-44 overflow-y-auto rounded-md bg-slate-50 p-1">
               <button
                 v-for="school in searchedSchools"
                 :key="school.id"
-                class="block w-full text-left px-3 py-2 hover:bg-gray-100"
+                class="block w-full rounded px-3 py-2 text-left text-sm text-slate-900 transition hover:bg-white"
                 @click.prevent="selectSchool(school.name)"
               >
                 {{ school.name }}
@@ -90,95 +97,99 @@
         </div>
 
         <div v-if="role === 'school'">
-          <label class="block text-sm font-medium text-gray-900 mb-2">Выберите класс</label>
-          <div class="flex flex-wrap gap-2 mb-2">
-            <button type="button" class="rounded-xl border px-3 py-1 text-sm" :class="grade === num.toString() ? 'bg-gray-800 text-white' : ''" v-for="num in 12" :key="num" @click="grade = num.toString()">
+          <label class="mb-2 block text-sm font-semibold text-slate-900">Выберите класс</label>
+          <div class="mb-2 flex flex-wrap gap-2">
+            <button type="button" class="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200" :class="grade === num.toString() ? 'bg-[#F26C4F] text-white hover:bg-[#cc5d44]' : ''" v-for="num in 12" :key="num" @click="grade = num.toString()">
               {{ num }}
             </button>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="rounded-xl border px-3 py-1 text-sm" :class="letter === l && 'bg-gray-800 text-white'" v-for="l in letters" :key="l" @click="letter = l">
+            <button type="button" class="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200" :class="letter === l && 'bg-[#F26C4F] text-white hover:bg-[#cc5d44]'" v-for="l in letters" :key="l" @click="letter = l">
               {{ l }}
             </button>
           </div>
         </div>
 
         <div v-else-if="role === 'student'">
-          <label for="group" class="block text-sm font-medium text-gray-900 mb-2">Введите группу</label>
+          <label for="group" class="mb-2 block text-sm font-semibold text-slate-900">Введите группу</label>
           <input
-                type="text"
-                id="group"
-                class="input_request w-full"
-                placeholder="П-22, ISU(US)23-1"
-                v-model="group"
-                :class="errGroup && 'border-red-500'"
-                @blur="validateGroup"
-                :pattern="GROUP_RE.source"
-                title="Буквы, цифры, пробел, - _ ( ) / (2–32 символа)"
+            type="text"
+            id="group"
+            class="input_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10"
+            placeholder="П-22, ISU(US)23-1"
+            v-model="group"
+            :class="errGroup && 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10'"
+            @blur="validateGroup"
+            :pattern="GROUP_RE.source"
+            title="Буквы, цифры, пробел, - _ ( ) / (2–32 символа)"
           />
-          <p v-if="errGroup" class="text-xs text-red-600 mt-1">{{ errGroup }}</p>
+          <p v-if="errGroup" class="mt-1 text-xs text-red-600">{{ errGroup }}</p>
         </div>
 
         <div v-else-if="role === 'staff'">
-          <label for="group" class="block text-sm font-medium text-gray-900 mb-2">Выберите подразделение</label>
+          <label for="group" class="mb-2 block text-sm font-semibold text-slate-900">Выберите подразделение</label>
           <div class="flex flex-wrap gap-2">
-            <button v-for="department in staffDepartments" :key="department" type="button" class="rounded-xl border px-3 py-1 text-sm"
-              :class="staffGroup === department ? 'bg-gray-800 text-white' : ''" @click="staffGroup = department" >{{ department }}</button>
+            <button v-for="department in staffDepartments" :key="department" type="button" class="rounded-md bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+              :class="staffGroup === department ? 'bg-[#F26C4F] text-white hover:bg-[#cc5d44]' : ''" @click="staffGroup = department" >{{ department }}</button>
           </div>
         </div>
 
-    <div>
-      <label for="products" class="block text-sm font-medium text-gray-900 mb-2">Выберите устройство доступа</label>
-      <select id="products" class="select_request w-full" v-model="productType">
-        <option v-for="p in products" :key="p.code" :value="p.name">
-          {{ p.name }} ({{ p.price }} тенге)
-        </option>
-      </select>
+        <div>
+          <label for="products" class="mb-2 block text-sm font-semibold text-slate-900">Выберите устройство доступа</label>
+          <select id="products" class="select_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10" v-model="productType">
+            <option v-for="p in products" :key="p.code" :value="p.name">
+              {{ p.name }} ({{ p.price }} тенге)
+            </option>
+          </select>
 
-      <div v-if="productType === 'Браслет'" class="mt-2">
-        <label for="braceletColor" class="block text-sm font-medium text-gray-900 mb-2">Выберите цвет браслета</label>
-        <select id="braceletColor" class="select_request w-full" v-model="braceletColor">
-          <option value="Бирюзовый">Бирюзовый</option>
-          <option value="Красный">Красный</option>
-          <option value="Черный">Черный</option>
-          <option value="Желтый">Желтый</option>
-          <option value="Синий">Синий</option>
-          <option value="Зеленый">Зеленый</option>
-        </select>
-      </div>
-    </div>
-          <button type="button" @click="showModalProductsFunction" class="text-sm underline hover:text-gray-700">
-              Посмотреть продукты
-          </button>
+          <div v-if="productType === 'Браслет'" class="mt-3">
+            <label for="braceletColor" class="mb-2 block text-sm font-semibold text-slate-900">Выберите цвет браслета</label>
+            <select id="braceletColor" class="select_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10" v-model="braceletColor">
+              <option value="Бирюзовый">Бирюзовый</option>
+              <option value="Красный">Красный</option>
+              <option value="Черный">Черный</option>
+              <option value="Желтый">Желтый</option>
+              <option value="Синий">Синий</option>
+              <option value="Зеленый">Зеленый</option>
+            </select>
+          </div>
+        </div>
 
-        <button class="button w-full " type="submit">Оставить заявку</button>
-      </form>
-    </div>
+        <button type="button" @click="showModalProductsFunction" class="text-sm font-medium text-slate-500 underline underline-offset-4 transition hover:text-slate-900">
+          Посмотреть продукты
+        </button>
+
+        <button class="w-full rounded px-6 py-3 text-sm font-semibold  shadow-lg shadow-slate-900/15 transition-transform hover:bg-[#318fc6] text-white bg-[#3FB1F3] active:scale-95" type="submit">Оставить заявку</button>
+      </section>
+    </form>
+
     <!-- Модальное окно загрузки -->
-    <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white p-6 rounded-lg shadow-xl text-center animate-pulse">
-        <p class="text-lg font-semibold text-gray-800">Загрузка…</p>
-        <p class="text-lg font-light text-gray-700">Если загрузка не заканчивается попробуйте почистить кэш и куки и подать еще раз</p>
+    <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div class="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl animate-pulse">
+        <p class="text-lg font-semibold text-gray-900">Загрузка…</p>
+        <p class="mt-2 text-sm leading-6 text-gray-600">Если загрузка не заканчивается попробуйте почистить кэш и куки и подать еще раз</p>
       </div>
     </div>
 
     <!-- Модальное окно после заявки -->
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white hover:scale-105 ease transition-transform p-6 rounded-lg shadow-xl max-w-sm text-center">
-        <h2 class="text-lg font-bold mb-4">Заявка отправлена!</h2>
-        <p class="text-blue-600 font-mono text-xl mb-2">Трек-номер: {{ track_id }}</p>
-        <p class="text-blue-600 font-mono text-xl mb-2">Пароль: {{ password }}</p>
-        <button @click="copyTrackAndPassword" class="button_admin bg-gray-800 hover:bg-gray-700 mb-2">Скопировать трек и пароль</button>
-        <button @click="showModal = false" class="bg-gray-800 hover:bg-gray-700 button_admin">Закрыть</button>
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+        <h2 class="text-xl font-bold text-slate-900">Заявка отправлена!</h2>
+        <div class="my-5 space-y-2 rounded-xl bg-gray-50 p-4">
+          <p class="break-words font-mono text-lg text-blue-600">Трек-номер: {{ track_id }}</p>
+          <p class="break-words font-mono text-lg text-blue-600">Пароль: {{ password }}</p>
+        </div>
+        <button @click="copyTrackAndPassword" class="button_admin mb-2 w-full rounded-xl bg-[#F26C4F] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#cc5d44]">Скопировать трек и пароль</button>
+        <button @click="showModal = false" class="button_admin w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-200">Закрыть</button>
       </div>
     </div>
 
     <!-- Модальное окно посмотреть товары -->
-    <div v-if="showModalProducts" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white hover:scale-105 ease transition-transform p-0 rounded-lg shadow-xl max-w-sm text-center">
-        <h2 class="text-lg font-bold mb-4 pt-3">Доступные продукты</h2>
-        <img src="public\img\products.png" class="pr-5 pl-5"></img>
-        <button @click="showModalProducts = false" class="bg-gray-800 hover:bg-gray-700 button_admin">Закрыть</button>
+    <div v-if="showModalProducts" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-white text-center shadow-2xl">
+        <h2 class="px-5 pt-5 text-lg font-bold text-slate-900">Доступные продукты</h2>
+        <img src="public\img\products.png" class="w-full px-5 py-4" alt="Доступные продукты" />
+        <button @click="showModalProducts = false" class="button_admin mb-5 rounded-xl bg-[#F26C4F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#cc5d44]">Закрыть</button>
       </div>
     </div>
   </main>
@@ -400,6 +411,8 @@ const showRecaptchaBadge = () => {
   const badge = document.querySelector('.grecaptcha-badge')
   if (badge) {
     const style = badge.style
+    style.setProperty('left', '0', 'important')
+    style.setProperty('right', 'auto', 'important')
     style.setProperty('visibility', 'visible', 'important')
     style.setProperty('opacity', '1', 'important')
     style.setProperty('transition', 'none', 'important')
@@ -524,6 +537,8 @@ body {
 
 /* Показ значка капчи */
 .grecaptcha-badge {
+  left: 0 !important;
+  right: auto !important;
   visibility: visible !important;
   opacity: 1 !important;
   transition: none !important;

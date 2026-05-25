@@ -2,7 +2,7 @@
   <section class="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-5 sm:space-y-6">
     <div class="space-y-2 text-center">
       <h2 class="text-lg sm:text-xl md:text-2xl font-bold leading-tight">
-        Дашборд по заявкам и выданным устройствам
+        Аналитика по заявкам и выданным устройствам
       </h2>
       <p class="text-sm text-gray-600">
         Все показатели строятся только по данным из базы за выбранный период.
@@ -30,28 +30,25 @@
 
       <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <button
-          class="border px-3 py-2 rounded text-sm w-full sm:w-auto"
+          type="button"
+          :class="presetButtonClass('today')"
           @click="setToday"
         >
           Сегодня
         </button>
         <button
-          class="border px-3 py-2 rounded text-sm w-full sm:w-auto"
+          type="button"
+          :class="presetButtonClass('last7')"
           @click="setLast7"
         >
           Последние 7 дней
         </button>
         <button
-          class="border px-3 py-2 rounded text-sm w-full sm:w-auto"
+          type="button"
+          :class="presetButtonClass('month')"
           @click="setThisMonth"
         >
           Текущий месяц
-        </button>
-        <button
-          class="border px-3 py-2 rounded font-semibold text-sm w-full sm:w-auto bg-gray-900 text-white hover:bg-gray-800"
-          @click="load"
-        >
-          Обновить
         </button>
       </div>
     </div>
@@ -245,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 type ProductItem = {
   product: string
@@ -293,6 +290,8 @@ type DashboardResponse = {
   dailyItems: DailyItem[]
 }
 
+type Preset = 'today' | 'last7' | 'month'
+
 const from = ref('')
 const to = ref('')
 const items = ref<ProductItem[]>([])
@@ -322,6 +321,17 @@ const maxSourceCount = computed(() => Math.max(...sourceItems.value.map((item) =
 const maxDailyCount = computed(() =>
   Math.max(...dailyItems.value.flatMap((item) => [item.created, item.issued]), 0)
 )
+
+const activePreset = computed<Preset | null>(() => {
+  const ranges = getPresetRanges()
+  const current = `${from.value}:${to.value}`
+
+  if (current === `${ranges.today.from}:${ranges.today.to}`) return 'today'
+  if (current === `${ranges.last7.from}:${ranges.last7.to}`) return 'last7'
+  if (current === `${ranges.month.from}:${ranges.month.to}`) return 'month'
+
+  return null
+})
 
 const summaryCards = computed(() => [
   {
@@ -355,25 +365,55 @@ function toISODate(d: Date) {
   return d.toISOString().slice(0, 10)
 }
 
+function getPresetRanges() {
+  const today = new Date()
+  const last7Start = new Date()
+  last7Start.setDate(last7Start.getDate() - 6)
+  const monthStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1))
+
+  return {
+    today: {
+      from: toISODate(today),
+      to: toISODate(today)
+    },
+    last7: {
+      from: toISODate(last7Start),
+      to: toISODate(today)
+    },
+    month: {
+      from: toISODate(monthStart),
+      to: toISODate(today)
+    }
+  }
+}
+
+function presetButtonClass(preset: Preset) {
+  const isActive = activePreset.value === preset
+
+  return [
+    'border px-3 py-2 rounded text-sm w-full sm:w-auto transition-colors',
+    isActive
+      ? 'border-gray-900 bg-gray-900 text-white shadow-sm'
+      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-500 hover:bg-gray-50'
+  ]
+}
+
 function setToday() {
-  const d = new Date()
-  from.value = toISODate(d)
-  to.value = toISODate(d)
+  const range = getPresetRanges().today
+  from.value = range.from
+  to.value = range.to
 }
 
 function setLast7() {
-  const d2 = new Date()
-  const d1 = new Date()
-  d1.setDate(d1.getDate() - 6)
-  from.value = toISODate(d1)
-  to.value = toISODate(d2)
+  const range = getPresetRanges().last7
+  from.value = range.from
+  to.value = range.to
 }
 
 function setThisMonth() {
-  const now = new Date()
-  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
-  from.value = toISODate(start)
-  to.value = toISODate(now)
+  const range = getPresetRanges().month
+  from.value = range.from
+  to.value = range.to
 }
 
 function formatMoney(value: number) {
@@ -431,8 +471,18 @@ async function load() {
   }
 }
 
+let loadTimer: ReturnType<typeof setTimeout> | undefined
+
+watch([from, to], () => {
+  if (loadTimer) clearTimeout(loadTimer)
+  loadTimer = setTimeout(load, 200)
+})
+
 onMounted(() => {
   setLast7()
-  load()
+})
+
+onBeforeUnmount(() => {
+  if (loadTimer) clearTimeout(loadTimer)
 })
 </script>

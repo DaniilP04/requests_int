@@ -6,6 +6,7 @@
   <input v-model="username" type="text" placeholder="Username" class="input mb-2 w-full border px-2 py-1" />
   <input v-model="password" type="password" placeholder="Password" class="input mb-2 w-full border px-2 py-1" />
   <button type="submit" class="button w-full">Войти</button>
+  <p>Тестовые данные для входа: superadmin admin</p>
   <p v-if="error" class="text-red-600 text-sm mt-2 text-center">
   {{ error }}
 </p>

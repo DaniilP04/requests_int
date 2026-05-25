@@ -98,13 +98,9 @@
               rel="noopener noreferrer"
               class="w-full max-w-[288px] aspect-square bg-white rounded-3xl shadow-[0_12px_35px_rgba(15,23,42,0.15)] flex flex-col items-center text-center px-6 pt-6 pb-8 transition-transform hover:scale-[1.03] active:scale-95"
             >
-              <h2 class="text-lg font-semibold text-slate-900">
-                Телеграм бот
-              </h2>
+              <h2 class="text-lg font-semibold text-slate-900">Телеграм бот</h2>
 
-              <p class="text-sm text-slate-500 mb-5">
-                Подача заявки в боте
-              </p>
+              <p class="text-sm text-slate-500 mb-5">Подача заявки в боте</p>
 
               <img
                 src="/img/qr-tg.png"
@@ -126,9 +122,7 @@
                 Компания Интегро
               </h2>
 
-              <p class="text-sm text-slate-500 mb-5">
-                Бизнес-аккаунт WhatsApp
-              </p>
+              <p class="text-sm text-slate-500 mb-5">Бизнес-аккаунт WhatsApp</p>
 
               <img
                 src="/img/qr.png"
@@ -142,3 +136,10 @@
     </section>
   </main>
 </template>
+
+<style>
+.grecaptcha-badge {
+  left: 0 !important;
+  right: auto !important;
+}
+</style>

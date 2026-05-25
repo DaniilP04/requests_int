@@ -129,3 +129,10 @@ const trackRequest = async () => {
 
 
 </script>
+
+<style>
+.grecaptcha-badge {
+  left: 0 !important;
+  right: auto !important;
+}
+</style>
