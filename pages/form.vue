@@ -61,9 +61,9 @@
         <div>
           <label class="mb-2 block text-sm font-semibold text-slate-900">Выберите вашу роль</label>
           <div class="grid grid-cols-3 gap-2 rounded-md bg-slate-100 p-1">
-            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'school' ? 'bg-[#F26C4F] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('school')">Школьник</button>
-            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'student' ? 'bg-[#F26C4F] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('student')">Студент</button>
-            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'staff' ? 'bg-[#F26C4F] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('staff')">Сотрудник</button>
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'school' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('school')">Школьник</button>
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'student' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('student')">Студент</button>
+            <button type="button" class="rounded px-2 py-2.5 text-sm font-semibold text-slate-900 transition" :class="role === 'staff' ? 'bg-[#3FB1F3] text-white shadow-sm' : 'hover:bg-white'" @click="setRole('staff')">Сотрудник</button>
           </div>
         </div>
 
