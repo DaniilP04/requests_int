@@ -42,15 +42,14 @@ model admin {
 }
 
 model products {
-  id         Int      @id @default(autoincrement())
-  code       String   @unique
-  name       String
-  color      String?
-  price      Int
-  quantity   Int      @default(0)
-  isAvailable Boolean @default(true) @map("is_active")
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-
+  id              Int               @id @default(autoincrement())
+  code            String            @unique
+  name            String
+  price           Int
+  isAvailable     Boolean           @default(true) @map("is_active")
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  color           String?
+  quantity        Int               @default(0)
   stock_movements stock_movements[]
 }
 
@@ -62,6 +61,5 @@ model stock_movements {
   note       String?
   created_by String?
   created_at DateTime @default(now()) @db.Timestamptz(6)
-
-  product products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }

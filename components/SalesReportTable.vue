@@ -1,14 +1,5 @@
 <template>
   <section class="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-5 sm:space-y-6">
-    <div class="space-y-2 text-center">
-      <h2 class="text-lg sm:text-xl md:text-2xl font-bold leading-tight">
-        Аналитика по заявкам и выданным устройствам
-      </h2>
-      <p class="text-sm text-gray-600">
-        Все показатели строятся только по данным из базы за выбранный период.
-      </p>
-    </div>
-
     <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 sm:items-end">
       <div class="w-full sm:w-auto">
         <label class="block text-sm mb-1">С</label>

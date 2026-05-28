@@ -2,13 +2,14 @@
 const route = useRoute()
 
 const pagesWithChat = ['/', '/form', '/check']
+const isAdminPage = computed(() => route.path.startsWith('/admin'))
 const showChatBot = computed(() => pagesWithChat.includes(route.path))
 </script>
 
 <template>
-  <div class="h-2 bg-slate-800"></div>
+  <div v-if="!isAdminPage" class="h-2 bg-slate-800"></div>
 
-  <header class="bg-white shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.08)]">
+  <header v-if="!isAdminPage" class="bg-white shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.08)]">
     <div class="relative mx-auto max-w-7xl px-4 py-3 flex items-center">
 
       <NuxtLink to="/" class="flex items-center py-2">

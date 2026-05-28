@@ -110,7 +110,7 @@ const closeModal = () => {
 </script>
 
 <template>
-    <div class="bg_custom relative border border-gray-900 rounded-lg">
+    <div class="bg_custom relative border rounded-lg">
         <div class="flex items-center justify-between">
             <SearchForm @search="handleSearch" />
         </div>
