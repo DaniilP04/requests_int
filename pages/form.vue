@@ -136,7 +136,10 @@
 
         <div>
           <label for="products" class="mb-2 block text-sm font-semibold text-slate-900">Выберите устройство доступа</label>
-          <select id="products" class="select_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10" v-model="productType">
+          <select id="products" class="select_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10 disabled:bg-slate-100 disabled:text-slate-500" v-model="productType" :disabled="products.length === 0">
+            <option v-if="products.length === 0" value="">
+              Нет доступных устройств
+            </option>
             <option v-for="p in products" :key="p.code" :value="p.name">
               {{ p.name }} ({{ p.price }} тенге)
             </option>
@@ -145,12 +148,9 @@
           <div v-if="productType === 'Браслет'" class="mt-3">
             <label for="braceletColor" class="mb-2 block text-sm font-semibold text-slate-900">Выберите цвет браслета</label>
             <select id="braceletColor" class="select_request w-full rounded-md border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#237fe5] focus:ring-2 focus:ring-[#237fe5]/10" v-model="braceletColor">
-              <option value="Бирюзовый">Бирюзовый</option>
-              <option value="Красный">Красный</option>
-              <option value="Черный">Черный</option>
-              <option value="Желтый">Желтый</option>
-              <option value="Синий">Синий</option>
-              <option value="Зеленый">Зеленый</option>
+              <option v-for="color in braceletColors" :key="color" :value="color">
+                {{ color }}
+              </option>
             </select>
           </div>
         </div>
@@ -197,7 +197,7 @@
 
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch} from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRuntimeConfig } from '#imports'
 
 // Разрешаем только рус/каз буквы + дефис, длина 2–50
@@ -350,23 +350,35 @@ onMounted(async () => {
   schools.value = res.schools
 })
 
-type Product = { code: string; name: string; price: number }
+type Product = { code: string; name: string; price: number; colors: string[] }
 const products = ref<Product[]>([])
 const pricesMap = computed(() => Object.fromEntries(products.value.map(p => [p.name, p.price])))
-
-onMounted(async () => {
-  const res = await $fetch('/api/all-schools')
-  schools.value = res.schools
-})
+const braceletColors = computed(() =>
+  products.value.find((product) => product.name === 'Браслет')?.colors || []
+)
 
 onMounted(async () => {
   const res = await $fetch<{ products: Product[] }>('/api/products')
   products.value = res.products
+  if (!products.value.some((product) => product.name === productType.value)) {
+    productType.value = ''
+  }
+
   // если productType пустой или не существует в списке — ставим первый
   if (!productType.value && products.value.length) {
     productType.value = products.value[0].name
   }
 })
+
+watch([productType, braceletColors], () => {
+  if (productType.value === 'Браслет') {
+    if (!braceletColor.value || !braceletColors.value.includes(braceletColor.value)) {
+      braceletColor.value = braceletColors.value[0] || ''
+    }
+  } else {
+    braceletColor.value = ''
+  }
+}, { immediate: true })
 
 // Установка класса в зависимости от роли
 watch([role, grade, letter, group, staffGroup], () => {

@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const products = await prisma.products.findMany({
-    where: { is_active: true },
+    where: { isAvailable: true },
     select: { name: true, price: true }
   })
   const priceMap = new Map(products.map((p) => [p.name, p.price]))
