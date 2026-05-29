@@ -1,12 +1,5 @@
 <template>
   <section class="w-full max-w-4xl mx-auto px-3 sm:px-4 space-y-4">
-    <div class="space-y-1 text-center">
-      <h2 class="text-xl font-bold">Цены устройств</h2>
-      <p class="text-sm text-gray-600">
-        Здесь настраиваются цены и публичная доступность устройств.
-      </p>
-    </div>
-
     <p v-if="error" class="text-red-600 text-sm sm:text-base break-words">
       {{ error }}
     </p>

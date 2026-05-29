@@ -114,9 +114,9 @@ const deleteSchool = async () => {
 </script>
 
 <template>
-  <div class="bg_custom relative border border-gray-900 rounded-lg">
+  <div class="bg_custom relative w-full overflow-hidden rounded-xl border bg-white shadow-sm">
     <div
-      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4"
+      class="flex flex-col gap-3 border-b border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between"
     >
       <div class="w-full sm:w-auto sm:flex-1 sm:max-w-md">
         <SearchForm @search="handleSearch" />
@@ -124,33 +124,39 @@ const deleteSchool = async () => {
 
       <button
         @click="isModalOpen = true"
-        class="w-full sm:w-auto shrink-0 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg flex justify-center items-center active:scale-95 transition-transform px-4 py-2 text-nowrap"
+        class="flex w-full shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-100 active:scale-95 sm:w-auto"
       >
         Добавить
       </button>
     </div>
 
     <!-- Таблица для планшета-->
-    <table class="hidden sm:table w-full">
-      <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+    <div class="hidden sm:block overflow-x-auto">
+    <table class="w-full table-fixed text-xs">
+      <colgroup>
+        <col class="w-[58%]" />
+        <col class="w-[22%]" />
+        <col class="w-[20%]" />
+      </colgroup>
+      <thead class="bg-gray-50 text-[11px] uppercase text-gray-900">
         <tr>
-          <th class="px-4 py-3 border-2 border-gray-60">Название</th>
-          <th class="px-4 py-3 border-2 border-gray-60">Тип</th>
-          <th class="px-4 py-3 border-2 border-gray-60">Действия</th>
+          <th class="border px-2 py-2 text-left">Название</th>
+          <th class="border px-2 py-2 text-left">Тип</th>
+          <th class="border px-2 py-2 text-center">Действия</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="school in filtereSchools" :key="school.id">
-          <td class="px-4 py-3 text-center border-2 border-gray-60">
+        <tr v-for="school in filtereSchools" :key="school.id" class="align-top hover:bg-slate-50">
+          <td class="break-words border px-2 py-2 leading-snug">
             {{ school.name }}
           </td>
-          <td class="px-4 py-3 text-center border-2 border-gray-60">
+          <td class="break-words border px-2 py-2 leading-snug">
             {{ school.type }}
           </td>
-          <td class="px-4 py-3 text-center border-2 border-gray-60">
+          <td class="border px-2 py-2 text-center">
             <button
               @click="openEditModal(school)"
-              class="text-blue-600 hover:underline"
+              class="rounded-md border border-gray-300 bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-900 transition hover:bg-gray-100 active:scale-95"
             >
               Редактировать
             </button>
@@ -158,13 +164,14 @@ const deleteSchool = async () => {
         </tr>
       </tbody>
     </table>
+    </div>
 
     <!-- Мобильная версия -->
     <div class="sm:hidden space-y-4 p-4 pt-0">
       <div
         v-for="school in filtereSchools"
         :key="'mobile-' + school.id"
-        class="bg-white shadow border rounded-lg p-4"
+        class="rounded-lg border bg-white p-4 shadow-sm"
       >
         <div class="mb-2 break-words">
           <strong>Название:</strong> {{ school.name }}
@@ -174,7 +181,7 @@ const deleteSchool = async () => {
 
         <button
           @click="openEditModal(school)"
-          class="w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2"
+          class="w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm font-medium text-gray-900 transition hover:bg-gray-100 active:scale-95"
         >
           Редактировать
         </button>

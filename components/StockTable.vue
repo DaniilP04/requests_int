@@ -1,12 +1,5 @@
 <template>
   <section class="w-full max-w-6xl mx-auto px-3 sm:px-4 space-y-5">
-    <div class="space-y-1 text-center">
-      <h2 class="text-xl font-bold">Склад устройств</h2>
-      <p class="text-sm text-gray-600">
-        При статусе <span class="font-semibold">"Выдан"</span> остаток уменьшается автоматически.
-      </p>
-    </div>
-
     <div class="rounded-xl border bg-white p-4 shadow-sm space-y-4">
       <div>
         <h3 class="text-base font-semibold">Приход на склад</h3>

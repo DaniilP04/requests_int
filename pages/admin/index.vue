@@ -82,13 +82,6 @@
       </div>
 
       <nav class="min-h-0 flex-1 overflow-y-auto px-3 py-4">
-        <p
-          class="px-3 pb-2 text-xs font-semibold uppercase text-slate-400"
-          :class="sidebarCollapsed ? 'lg:hidden' : ''"
-        >
-          Разделы
-        </p>
-
         <div class="space-y-1">
           <button
             v-for="item in tableItems"
@@ -167,15 +160,15 @@
           </div>
         </div>
 
-        <div class="flex min-w-max" v-if="selectus === 'DataTable'">
+        <div class="flex w-full" v-if="selectus === 'DataTable'">
           <DataTable :requests="requests" @deleted="handleDeletedRequest" />
         </div>
 
-        <div class="flex min-w-max" v-if="selectus === 'SchoolsTable'">
+        <div class="flex w-full" v-if="selectus === 'SchoolsTable'">
           <SchoolsTable :schools="schools" />
         </div>
 
-        <div class="flex min-w-max" v-if="selectus === 'DeletedTable'">
+        <div class="flex w-full" v-if="selectus === 'DeletedTable'">
           <DeletedTable :requests="deletedRequests" @restored="handleRestoreRequest" />
         </div>
 
