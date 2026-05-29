@@ -83,39 +83,52 @@ const restoreRequest = async (track_id: string) => {
 </script>
 
 <template>
-    <div class="bg_custom relative border border-gray-900 rounded-lg">
+    <div class="bg_custom relative w-full overflow-hidden rounded-xl border bg-white shadow-sm">
         <div class="flex items-center justify-between">
             <SearchForm @search="handleSearch" />
         </div>
 <!-- Таблица -->
-<table class="hidden sm:table w-full">
-  <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+<div class="hidden sm:block overflow-x-auto">
+<table class="w-full table-fixed text-xs">
+  <colgroup>
+    <col class="w-[15%]" />
+    <col class="w-[15%]" />
+    <col class="w-[5%]" />
+    <col class="w-[10%]" />
+    <col class="w-[10%]" />
+    <col class="w-[8%]" />
+    <col class="w-[11%]" />
+    <col class="w-[9%]" />
+    <col class="w-[9%]" />
+    <col class="w-[8%]" />
+  </colgroup>
+  <thead class="bg-gray-50 text-[11px] uppercase text-gray-900">
     <tr>
-      <th class="px-4 py-3 border">ФИО</th>
-      <th class="px-4 py-3 border">Уч. Заведение</th>
-      <th class="px-4 py-3 border">Класс</th>
-      <th class="px-4 py-3 border">Телефон</th>
-      <th class="px-4 py-3 border">Тип устройства</th>
-      <th class="px-4 py-3 border">Источник</th>
-      <th class="px-4 py-3 border">Статус</th>
-      <th class="px-4 py-3 border">Дата подачи</th>
-      <th class="px-4 py-3 border">Модифицировано</th>
-      <th class="px-4 py-3 border">Действия</th>
+      <th class="border px-2 py-2 text-left">ФИО</th>
+      <th class="border px-2 py-2 text-left">Уч. заведение</th>
+      <th class="border px-2 py-2 text-center">Класс</th>
+      <th class="border px-2 py-2 text-left">Телефон</th>
+      <th class="border px-2 py-2 text-left">Устройство</th>
+      <th class="border px-2 py-2 text-left">Источник</th>
+      <th class="border px-2 py-2 text-left">Статус</th>
+      <th class="border px-2 py-2 text-left">Дата</th>
+      <th class="border px-2 py-2 text-left">Изменено</th>
+      <th class="border px-2 py-2 text-center">Действия</th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="request in filteredRequests" :key="request.id">
-      <td class="px-4 py-3 text-center border">{{ request.full_name }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.school }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.class }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.phone ?? 'Не указан' }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.device_type }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.source ?? '—' }}</td>
-      <td class="px-4 py-3 text-center border">{{ request.status }}</td>
-      <td class="px-4 py-3 text-center border">
+    <tr v-for="request in filteredRequests" :key="request.id" class="align-top hover:bg-slate-50">
+      <td class="break-words border px-2 py-2 leading-snug">{{ request.full_name }}</td>
+      <td class="break-words border px-2 py-2 leading-snug">{{ request.school }}</td>
+      <td class="border px-2 py-2 text-center">{{ request.class }}</td>
+      <td class="break-words border px-2 py-2">{{ request.phone ?? 'Не указан' }}</td>
+      <td class="break-words border px-2 py-2 leading-snug">{{ request.device_type }}</td>
+      <td class="break-words border px-2 py-2">{{ request.source ?? '—' }}</td>
+      <td class="break-words border px-2 py-2 leading-snug">{{ request.status }}</td>
+      <td class="border px-2 py-2 leading-snug">
         {{ new Date(request.created_at!).toLocaleDateString('ru-RU') }}
       </td>
-      <td class="px-4 py-3 text-center border">
+      <td class="border px-2 py-2 leading-snug">
         {{ request.status_modified_at
           ? new Date(request.status_modified_at).toLocaleString('ru-RU', {
               day: '2-digit',
@@ -127,9 +140,9 @@ const restoreRequest = async (track_id: string) => {
           : 'Нет'
         }}
       </td>
-      <td class="px-4 py-3 text-center border">
+      <td class="border px-2 py-2 text-center">
         <div class="flex justify-center gap-1">
-          <button class="bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 rounded-lg active:scale-95 transition-transform p-2 text-nowrap" @click="restoreRequest(request.track_id)">
+          <button class="rounded-md border border-gray-300 bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-900 transition hover:bg-gray-100 active:scale-95" @click="restoreRequest(request.track_id)">
             Восстановить
           </button>
         </div>
@@ -137,6 +150,7 @@ const restoreRequest = async (track_id: string) => {
     </tr>
   </tbody>
 </table>
+</div>
 
 <!-- Вариант для мобильных устройств -->
 <div class="sm:hidden space-y-4 mt-4">

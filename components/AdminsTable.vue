@@ -1,42 +1,47 @@
 <template>
   <section class="w-full max-w-3xl mx-auto px-3 sm:px-4 space-y-6">
-    <h2 class="text-xl font-bold">Пользователи (админы)</h2>
-
-    <!-- Добавить -->
-    <form
-      class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-2 sm:items-end"
-      @submit.prevent="createAdmin"
-    >
-      <div class="w-full sm:flex-1">
-        <label class="block text-sm mb-1">Логин</label>
-        <input
-          v-model="form.username"
-          class="w-full border p-2 rounded"
-          required
-        />
+    <div class="rounded-xl border bg-white p-4 shadow-sm space-y-4">
+      <div>
+        <h3 class="text-base font-semibold">Добавить пользователя</h3>
+        <p class="text-sm text-gray-500">Укажите логин, пароль и права доступа для нового пользователя.</p>
       </div>
 
-      <div class="w-full sm:flex-1">
-        <label class="block text-sm mb-1">Пароль</label>
-        <input
-          v-model="form.password"
-          type="password"
-          class="w-full border p-2 rounded"
-          required
-        />
-      </div>
-
-      <label class="flex items-center gap-2 sm:pb-2">
-        <input type="checkbox" v-model="form.is_super" />
-        <span class="text-sm">Супер</span>
-      </label>
-
-      <button
-        class="w-full sm:w-auto border px-3 py-2 rounded font-semibold"
+      <form
+        class="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto] gap-3 items-end"
+        @submit.prevent="createAdmin"
       >
-        Добавить
-      </button>
-    </form>
+        <div>
+          <label class="block text-sm mb-1">Логин</label>
+          <input
+            v-model="form.username"
+            class="w-full border rounded px-3 py-2 text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">Пароль</label>
+          <input
+            v-model="form.password"
+            type="password"
+            class="w-full border rounded px-3 py-2 text-sm"
+            required
+          />
+        </div>
+
+        <label class="flex h-10 items-center gap-2 rounded border px-3 text-sm">
+          <input type="checkbox" v-model="form.is_super" />
+          <span>Супер</span>
+        </label>
+
+        <button
+          type="submit"
+          class="border rounded px-4 py-2 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-800"
+        >
+          Добавить
+        </button>
+      </form>
+    </div>
 
     <!-- Таблица для десктопа -->
     <div class="hidden sm:block overflow-x-auto">
