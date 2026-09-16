@@ -198,7 +198,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRuntimeConfig } from '#imports'
+import { useReCaptcha } from 'vue-recaptcha-v3'
 
 const { selectedLanguage } = useSiteLanguage()
 
@@ -362,32 +362,13 @@ function validateGroup() {
   group.value = v
 }
 
-// Переменные для работы капчи
+// reCAPTCHA is loaded once, globally, by plugins/recaptcha.client.ts
+// (vue-recaptcha-v3), which only runs client-side. useReCaptcha() must be
+// called from a client-only context (onMounted) — calling it directly in
+// setup() also runs during SSR, where the plugin was never installed and
+// the composable returns undefined.
 const recaptchaToken = ref<string>('')
-const recaptchaLoaded = ref(false)
-
-const { $recaptcha } = useNuxtApp()
-const siteKey = useRuntimeConfig().public.recaptchaSiteKey
-
-// Запуск капчи
-const executeRecaptcha = async (action: string) => {
-  try {
-    if (!recaptchaLoaded.value) {
-      await loadRecaptcha()
-    }
-
-    return await new Promise<string>((resolve, reject) => {
-      grecaptcha.ready(() => {
-        grecaptcha.execute(siteKey, { action })
-          .then(resolve)
-          .catch(reject)
-      })
-    })
-  } catch (error) {
-    console.error('reCAPTCHA execution error:', error)
-    throw error
-  }
-}
+let executeRecaptcha: (action: string) => Promise<string>
 
 
 // Создание полного имени из полей 
@@ -518,31 +499,6 @@ watch([role, grade, letter, group, staffGroup], () => {
   }
 }, { immediate: true }) 
 
-// Прогрузка капчи
-const loadRecaptcha = () => {
-  return new Promise<void>((resolve, reject) => {
-    if (window.grecaptcha) {
-      recaptchaLoaded.value = true
-      return resolve()
-    }
-
-    const script = document.createElement('script')
-    script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`
-    script.async = true
-    script.defer = true
-    script.onload = () => {
-      recaptchaLoaded.value = true
-      resolve()
-    }
-    script.onerror = (err) => {
-      console.error('reCAPTCHA script failed to load', err)
-      reject(new Error('Failed to load reCAPTCHA'))
-    }
-    document.head.appendChild(script)
-  })
-}
-
-
 // Показ значка капчи
 const showRecaptchaBadge = () => {
   const badge = document.querySelector('.grecaptcha-badge')
@@ -558,17 +514,11 @@ const showRecaptchaBadge = () => {
 
 onMounted(async () => {
   if (process.client) {
-    await loadRecaptcha()
-    console.log('reCAPTCHA successfully loaded')
-    grecaptcha.ready(() => {
-      grecaptcha.execute(useRuntimeConfig().public.recaptchaSiteKey, {
-        action: 'homepage'
-      }).then(() => {
-        showRecaptchaBadge()
-        // Повторная проверка каждые 2 секунды (на случай динамического скрытия)
-        setInterval(showRecaptchaBadge, 2000)
-      })
-    })
+    executeRecaptcha = useReCaptcha()!.executeRecaptcha
+    await executeRecaptcha('homepage')
+    showRecaptchaBadge()
+    // Повторная проверка каждые 2 секунды (на случай динамического скрытия)
+    setInterval(showRecaptchaBadge, 2000)
   }
 })
 
