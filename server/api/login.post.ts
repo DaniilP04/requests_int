@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   attempt.lastAttempt = now
   loginAttempts.set(ip, attempt)
 
-  if (attempt.count > 5) {
+  if (attempt.count > 40) {
     throw createError({ statusCode: 429, message: 'Слишком много попыток. Подождите 5 минут.' })
   }
 
