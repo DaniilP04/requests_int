@@ -1,6 +1,9 @@
 <template>
   <section class="w-full max-w-6xl mx-auto px-3 sm:px-4 space-y-5">
-    <div v-if="notifications.length" class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm space-y-3">
+    <div
+      v-if="notifications.length"
+      class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm space-y-3"
+    >
       <div>
         <h3 class="text-base font-semibold text-amber-950">Уведомления</h3>
       </div>
@@ -11,8 +14,12 @@
         class="flex flex-col gap-3 rounded-lg border border-amber-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
       >
         <div>
-          <p class="text-sm font-medium text-slate-900">{{ notification.message }}</p>
-          <p class="mt-1 text-xs text-slate-500">{{ formatDateTime(notification.created_at) }}</p>
+          <p class="text-sm font-medium text-slate-900">
+            {{ notification.message }}
+          </p>
+          <p class="mt-1 text-xs text-slate-500">
+            {{ formatDateTime(notification.created_at) }}
+          </p>
         </div>
         <button
           type="button"
@@ -27,28 +34,47 @@
     <div class="rounded-xl border bg-white p-4 shadow-sm space-y-4">
       <div>
         <h3 class="text-base font-semibold">Приход на склад</h3>
-        <p class="text-sm text-gray-500">Выберите устройство и укажите количество для прихода.</p>
+        <p class="text-sm text-gray-500">
+          Выберите устройство и укажите количество для прихода.
+        </p>
       </div>
 
       <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
       <p v-if="success" class="text-sm text-green-600">{{ success }}</p>
 
-      <form class="grid grid-cols-1 md:grid-cols-[1fr_1fr_0.7fr_1fr_auto] gap-3 items-end" @submit.prevent="submitReceipt">
+      <form
+        class="grid grid-cols-1 md:grid-cols-[1fr_1fr_0.7fr_1fr_auto] gap-3 items-end"
+        @submit.prevent="submitReceipt"
+      >
         <div>
           <label class="block text-sm mb-1">Устройство</label>
-          <select v-model="receiptProductName" class="w-full border rounded px-3 py-2 text-sm">
+          <select
+            v-model="receiptProductName"
+            class="w-full border rounded px-3 py-2 text-sm"
+          >
             <option value="">Выберите устройство</option>
-            <option v-for="name in receiptDeviceOptions" :key="name" :value="name">
+            <option
+              v-for="name in receiptDeviceOptions"
+              :key="name"
+              :value="name"
+            >
               {{ name }}
             </option>
           </select>
         </div>
 
         <div v-if="receiptRequiresColor">
-          <label class="block text-sm mb-1">Цвет браслета</label>
-          <select v-model="receiptColor" class="w-full border rounded px-3 py-2 text-sm">
+          <label class="block text-sm mb-1">Цвет</label>
+          <select
+            v-model="receiptColor"
+            class="w-full border rounded px-3 py-2 text-sm"
+          >
             <option value="">Выберите цвет</option>
-            <option v-for="color in braceletColorOptions" :key="color" :value="color">
+            <option
+              v-for="color in colorOptionsForSelected"
+              :key="color"
+              :value="color"
+            >
               {{ color }}
             </option>
           </select>
@@ -89,9 +115,13 @@
       <div class="flex items-center justify-between gap-3">
         <div>
           <h3 class="text-base font-semibold">Остатки</h3>
-          <p class="text-sm text-gray-500">Красным подсвечиваются позиции, где осталось меньше 100 штук.</p>
+          <p class="text-sm text-gray-500">
+            Красным подсвечиваются позиции, где осталось меньше 100 штук.
+          </p>
         </div>
-        <button class="border rounded px-3 py-2 text-sm" @click="load">Обновить</button>
+        <button class="border rounded px-3 py-2 text-sm" @click="load">
+          Обновить
+        </button>
       </div>
 
       <div class="hidden sm:block overflow-x-auto">
@@ -106,19 +136,68 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="product in products" :key="product.id" :class="product.isLowStock ? 'bg-red-50' : ''">
+            <tr
+              v-for="product in products"
+              :key="product.id"
+              :class="product.isLowStock ? 'bg-red-50' : ''"
+            >
               <td class="p-2 border">{{ product.name }}</td>
-              <td class="p-2 border">{{ product.color || '—' }}</td>
+              <td class="p-2 border">{{ product.color || "—" }}</td>
               <td class="p-2 border">{{ formatMoney(product.price) }}</td>
               <td class="p-2 border">
-                <span :class="product.isLowStock ? 'font-semibold text-red-600' : 'text-gray-900'">
-                  {{ product.quantity }}
-                </span>
+                <div
+                  v-if="editingId === product.id"
+                  class="flex items-center gap-2"
+                >
+                  <input
+                    v-model.number="editQuantity"
+                    type="number"
+                    min="0"
+                    class="w-20 border rounded px-2 py-1 text-sm"
+                  />
+                  <button
+                    class="inline-flex items-center justify-center rounded border border-gray-900 bg-gray-900 p-1.5 text-white transition hover:bg-gray-800 active:scale-95"
+                    title="Сохранить"
+                    @click="saveEdit(product.id)"
+                  >
+                    <IconsIconCheck class="h-4 w-4" />
+                  </button>
+                  <button
+                    class="inline-flex items-center justify-center rounded border border-gray-300 p-1.5 text-gray-600 transition hover:bg-gray-100 active:scale-95"
+                    title="Отмена"
+                    @click="cancelEdit"
+                  >
+                    <IconsIconX class="h-4 w-4" />
+                  </button>
+                </div>
+                <div v-else class="flex items-center gap-2">
+                  <span
+                    :class="
+                      product.isLowStock
+                        ? 'font-semibold text-red-600'
+                        : 'text-gray-900'
+                    "
+                  >
+                    {{ product.quantity }}
+                  </span>
+                  <button
+                    v-if="product.color !== 'Все цвета'"
+                    class="inline-flex items-center justify-center rounded border border-gray-300 p-1.5 text-gray-600 transition hover:bg-gray-100 active:scale-95"
+                    title="Редактировать"
+                    @click="startEdit(product)"
+                  >
+                    <IconsIconPencil class="h-4 w-4" />
+                  </button>
+                </div>
               </td>
-              <td class="p-2 border whitespace-nowrap">{{ formatDateTime(product.updated_at) }}</td>
+              <td class="p-2 border whitespace-nowrap">
+                {{ formatDateTime(product.updated_at) }}
+              </td>
             </tr>
             <tr v-if="products.length === 0">
-              <td colspan="5" class="p-3 text-center text-gray-500">Устройств пока нет</td>
+              <td colspan="5" class="p-3 text-center text-gray-500">
+                Устройств пока нет
+              </td>
             </tr>
           </tbody>
         </table>
@@ -132,15 +211,62 @@
           :class="product.isLowStock ? 'bg-red-50 border-red-200' : 'bg-white'"
         >
           <p class="text-sm"><strong>Устройство:</strong> {{ product.name }}</p>
-          <p class="text-sm mt-1"><strong>Цвет:</strong> {{ product.color || '—' }}</p>
-          <p class="text-sm mt-1"><strong>Цена:</strong> {{ formatMoney(product.price) }}</p>
           <p class="text-sm mt-1">
-            <strong>Остаток:</strong>
-            <span :class="product.isLowStock ? 'font-semibold text-red-600' : 'text-gray-900'">
-              {{ product.quantity }}
-            </span>
+            <strong>Цвет:</strong> {{ product.color || "—" }}
           </p>
-          <p class="text-sm mt-1"><strong>Обновлено:</strong> {{ formatDateTime(product.updated_at) }}</p>
+          <p class="text-sm mt-1">
+            <strong>Цена:</strong> {{ formatMoney(product.price) }}
+          </p>
+          <div class="text-sm mt-1">
+            <strong>Остаток:</strong>
+            <div
+              v-if="editingId === product.id"
+              class="mt-1 flex items-center gap-2"
+            >
+              <input
+                v-model.number="editQuantity"
+                type="number"
+                min="0"
+                class="w-20 border rounded px-2 py-1 text-sm"
+              />
+              <button
+                class="inline-flex items-center justify-center rounded border border-gray-900 bg-gray-900 p-1.5 text-white transition hover:bg-gray-800 active:scale-95"
+                title="Сохранить"
+                @click="saveEdit(product.id)"
+              >
+                <IconsIconCheck class="h-4 w-4" />
+              </button>
+              <button
+                class="inline-flex items-center justify-center rounded border border-gray-300 p-1.5 text-gray-600 transition hover:bg-gray-100 active:scale-95"
+                title="Отмена"
+                @click="cancelEdit"
+              >
+                <IconsIconX class="h-4 w-4" />
+              </button>
+            </div>
+            <span v-else class="inline-flex items-center gap-2">
+              <span
+                :class="
+                  product.isLowStock
+                    ? 'font-semibold text-red-600'
+                    : 'text-gray-900'
+                "
+              >
+                {{ product.quantity }}
+              </span>
+              <button
+                v-if="product.color !== 'Все цвета'"
+                class="inline-flex items-center justify-center rounded border border-gray-300 p-1.5 text-gray-600 transition hover:bg-gray-100 active:scale-95"
+                title="Редактировать"
+                @click="startEdit(product)"
+              >
+                <IconsIconPencil class="h-4 w-4" />
+              </button>
+            </span>
+          </div>
+          <p class="text-sm mt-1">
+            <strong>Обновлено:</strong> {{ formatDateTime(product.updated_at) }}
+          </p>
         </article>
       </div>
     </div>
@@ -148,7 +274,9 @@
     <div class="rounded-xl border bg-white p-4 shadow-sm space-y-4">
       <div>
         <h3 class="text-base font-semibold">Последние движения</h3>
-        <p class="text-sm text-gray-500">История приходов и автоматических списаний.</p>
+        <p class="text-sm text-gray-500">
+          История приходов и автоматических списаний.
+        </p>
       </div>
 
       <div class="overflow-x-auto">
@@ -165,19 +293,33 @@
           </thead>
           <tbody>
             <tr v-for="movement in recentMovements" :key="movement.id">
-              <td class="p-2 border whitespace-nowrap">{{ formatDateTime(movement.created_at) }}</td>
+              <td class="p-2 border whitespace-nowrap">
+                {{ formatDateTime(movement.created_at) }}
+              </td>
               <td class="p-2 border">{{ movement.productLabel }}</td>
               <td class="p-2 border">{{ movementTypeLabel(movement.type) }}</td>
               <td class="p-2 border">
-                <span :class="movement.quantity < 0 ? 'text-red-600 font-semibold' : 'text-green-700 font-semibold'">
-                  {{ movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity }}
+                <span
+                  :class="
+                    movement.quantity < 0
+                      ? 'text-red-600 font-semibold'
+                      : 'text-green-700 font-semibold'
+                  "
+                >
+                  {{
+                    movement.quantity > 0
+                      ? `+${movement.quantity}`
+                      : movement.quantity
+                  }}
                 </span>
               </td>
-              <td class="p-2 border">{{ movement.created_by || 'system' }}</td>
-              <td class="p-2 border">{{ movement.note || '—' }}</td>
+              <td class="p-2 border">{{ movement.created_by || "system" }}</td>
+              <td class="p-2 border">{{ movement.note || "—" }}</td>
             </tr>
             <tr v-if="recentMovements.length === 0">
-              <td colspan="6" class="p-3 text-center text-gray-500">Движений пока нет</td>
+              <td colspan="6" class="p-3 text-center text-gray-500">
+                Движений пока нет
+              </td>
             </tr>
           </tbody>
         </table>
@@ -187,170 +329,235 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from "vue";
 
 type StockProduct = {
-  id: number
-  code: string
-  name: string
-  color: string | null
-  price: number
-  quantity: number
-  updated_at: string
-  isLowStock: boolean
-}
+  id: number;
+  code: string;
+  name: string;
+  color: string | null;
+  price: number;
+  quantity: number;
+  updated_at: string;
+  isLowStock: boolean;
+};
 
 type StockMovement = {
-  id: number
-  quantity: number
-  type: string
-  note: string | null
-  created_by: string | null
-  created_at: string
-  productLabel: string
-}
+  id: number;
+  quantity: number;
+  type: string;
+  note: string | null;
+  created_by: string | null;
+  created_at: string;
+  productLabel: string;
+};
 
 type AdminNotification = {
-  id: number
-  message: string
-  created_at: string
-}
+  id: number;
+  message: string;
+  created_at: string;
+};
 
-const products = ref<StockProduct[]>([])
-const recentMovements = ref<StockMovement[]>([])
-const notifications = ref<AdminNotification[]>([])
-const receiptProductName = ref('')
-const receiptColor = ref('')
-const receiptQuantity = ref<number | null>(null)
-const receiptNote = ref('')
-const error = ref('')
-const success = ref('')
+const products = ref<StockProduct[]>([]);
+const recentMovements = ref<StockMovement[]>([]);
+const notifications = ref<AdminNotification[]>([]);
+const receiptProductName = ref("");
+const receiptColor = ref("");
+const receiptQuantity = ref<number | null>(null);
+const receiptNote = ref("");
+const error = ref("");
+const success = ref("");
+
+const editingId = ref<number | null>(null);
+const editQuantity = ref<number | null>(null);
 
 const receiptDeviceOptions = computed(() =>
-  [...new Set(products.value.map((product) => product.name))].sort((a, b) => a.localeCompare(b, 'ru'))
-)
+  [...new Set(products.value.map((product) => product.name))].sort((a, b) =>
+    a.localeCompare(b, "ru"),
+  ),
+);
 
-const braceletColorOptions = computed(() =>
-  products.value
-    .filter((product) => product.name === 'Браслет' && product.color && product.color !== 'Все цвета')
+// Варианты одного и того же устройства (по названию), кроме сводной строки "Все цвета"
+const variantsForSelected = computed(() =>
+  products.value.filter(
+    (product) =>
+      product.name === receiptProductName.value &&
+      product.color !== "Все цвета",
+  ),
+);
+
+const colorOptionsForSelected = computed(() =>
+  variantsForSelected.value
+    .filter((product) => product.color)
     .map((product) => product.color as string)
-    .sort((a, b) => a.localeCompare(b, 'ru'))
-)
+    .sort((a, b) => a.localeCompare(b, "ru")),
+);
 
-const receiptRequiresColor = computed(() => receiptProductName.value === 'Браслет')
+// Цвет нужен, если хотя бы у одного варианта этого устройства он заполнен в базе
+const receiptRequiresColor = computed(
+  () => colorOptionsForSelected.value.length > 0,
+);
 
 const receiptProductId = computed(() => {
-  const product = products.value.find((item) => {
-    if (item.name !== receiptProductName.value) return false
-    if (receiptRequiresColor.value) return item.color === receiptColor.value
-    return !item.color
-  })
+  const product = variantsForSelected.value.find((item) => {
+    if (receiptRequiresColor.value) return item.color === receiptColor.value;
+    return !item.color;
+  });
 
-  return product?.id ?? null
-})
+  return product?.id ?? null;
+});
 
-watch(receiptProductName, (value) => {
-  if (value !== 'Браслет') {
-    receiptColor.value = ''
-    return
+watch(receiptProductName, () => {
+  if (!receiptRequiresColor.value) {
+    receiptColor.value = "";
+    return;
   }
 
-  if (!braceletColorOptions.value.includes(receiptColor.value)) {
-    receiptColor.value = braceletColorOptions.value[0] || ''
+  if (!colorOptionsForSelected.value.includes(receiptColor.value)) {
+    receiptColor.value = colorOptionsForSelected.value[0] || "";
   }
-})
+});
 
 async function load() {
-  error.value = ''
+  error.value = "";
   try {
-    const response = await $fetch<{ products: StockProduct[]; recentMovements: StockMovement[] }>('/api/stock')
-    products.value = response.products
-    recentMovements.value = response.recentMovements
+    const response = await $fetch<{
+      products: StockProduct[];
+      recentMovements: StockMovement[];
+    }>("/api/stock");
+    products.value = response.products;
+    recentMovements.value = response.recentMovements;
   } catch (e: any) {
-    error.value = e?.statusMessage || 'Ошибка загрузки склада'
+    error.value = e?.statusMessage || "Ошибка загрузки склада";
   }
 }
 
 async function loadNotifications() {
   try {
-    const response = await $fetch<{ notifications: AdminNotification[] }>('/api/admin-notifications')
-    notifications.value = response.notifications
+    const response = await $fetch<{ notifications: AdminNotification[] }>(
+      "/api/admin-notifications",
+    );
+    notifications.value = response.notifications;
   } catch (e: any) {
-    error.value = e?.statusMessage || 'Ошибка загрузки уведомлений'
+    error.value = e?.statusMessage || "Ошибка загрузки уведомлений";
   }
 }
 
 async function markNotificationRead(id: number) {
-  error.value = ''
+  error.value = "";
   try {
-    await $fetch('/api/admin-notifications/read', {
-      method: 'POST',
-      body: { id }
-    })
-    notifications.value = notifications.value.filter((notification) => notification.id !== id)
+    await $fetch("/api/admin-notifications/read", {
+      method: "POST",
+      body: { id },
+    });
+    notifications.value = notifications.value.filter(
+      (notification) => notification.id !== id,
+    );
   } catch (e: any) {
-    error.value = e?.statusMessage || 'Ошибка обновления уведомления'
+    error.value = e?.statusMessage || "Ошибка обновления уведомления";
   }
 }
 
 async function submitReceipt() {
-  error.value = ''
-  success.value = ''
+  error.value = "";
+  success.value = "";
 
   if (!receiptProductId.value) {
-    error.value = receiptRequiresColor.value ? 'Выберите устройство и цвет браслета' : 'Выберите устройство'
-    return
+    error.value = receiptRequiresColor.value
+      ? "Выберите устройство и цвет устройства"
+      : "Выберите устройство";
+    return;
   }
 
   if (!receiptQuantity.value || receiptQuantity.value < 1) {
-    error.value = 'Укажите корректное количество'
-    return
+    error.value = "Укажите корректное количество";
+    return;
   }
 
   try {
-    await $fetch('/api/stock/receipt', {
-      method: 'POST',
+    await $fetch("/api/stock/receipt", {
+      method: "POST",
       body: {
         productId: Number(receiptProductId.value),
         quantity: Number(receiptQuantity.value),
-        note: receiptNote.value
-      }
-    })
+        note: receiptNote.value,
+      },
+    });
 
-    success.value = 'Приход добавлен'
-    receiptProductName.value = ''
-    receiptColor.value = ''
-    receiptQuantity.value = null
-    receiptNote.value = ''
-    await load()
-    await loadNotifications()
+    success.value = "Приход добавлен";
+    receiptProductName.value = "";
+    receiptColor.value = "";
+    receiptQuantity.value = null;
+    receiptNote.value = "";
+    await load();
+    await loadNotifications();
   } catch (e: any) {
-    error.value = e?.statusMessage || 'Ошибка сохранения прихода'
+    error.value = e?.statusMessage || "Ошибка сохранения прихода";
+  }
+}
+
+function startEdit(product: StockProduct) {
+  error.value = "";
+  editingId.value = product.id;
+  editQuantity.value = product.quantity;
+}
+
+function cancelEdit() {
+  editingId.value = null;
+  editQuantity.value = null;
+}
+
+async function saveEdit(productId: number) {
+  error.value = "";
+  success.value = "";
+
+  if (editQuantity.value === null || !Number.isInteger(editQuantity.value) || editQuantity.value < 0) {
+    error.value = "Укажите корректное количество";
+    return;
+  }
+
+  try {
+    await $fetch("/api/stock/adjust", {
+      method: "POST",
+      body: {
+        productId,
+        quantity: editQuantity.value,
+        note: "Ручная корректировка остатка",
+      },
+    });
+
+    success.value = "Остаток обновлён";
+    setTimeout(() => (success.value = ""), 2000);
+    cancelEdit();
+    await load();
+  } catch (e: any) {
+    error.value = e?.statusMessage || "Ошибка обновления остатка";
   }
 }
 
 function formatMoney(value: number) {
-  return `${value.toLocaleString('ru-RU')} ₸`
+  return `${value.toLocaleString("ru-RU")} ₸`;
 }
 
 function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  return new Date(value).toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function movementTypeLabel(type: string) {
-  if (type === 'receipt') return 'Приход'
-  if (type === 'issue') return 'Списание'
-  return type
+  if (type === "receipt") return "Приход";
+  if (type === "issue") return "Списание";
+  if (type === "adjustment") return "Корректировка";
+  return type;
 }
 
 onMounted(async () => {
-  await load()
-  await loadNotifications()
-})
+  await load();
+  await loadNotifications();
+});
 </script>
