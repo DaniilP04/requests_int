@@ -35,7 +35,6 @@
 
         <button type="submit" class="w-full rounded bg-[#3FB1F3] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition-transform hover:bg-[#318fc6] active:scale-95">Войти</button>
 
-        <p class="rounded-md bg-slate-100 px-3 py-2.5 text-sm font-medium text-slate-500">Тестовые данные для входа: superadmin admin</p>
         <p v-if="error" class="rounded-md bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-600">
           {{ error }}
         </p>

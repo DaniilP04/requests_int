@@ -38,6 +38,13 @@ export default defineNuxtConfig({
       headers: {
         "X-Frame-Options": "DENY",
         "Content-Security-Policy": "frame-ancestors 'none'",
+        // Прод теперь всегда за HTTPS (Cloudflare) — просим браузер и
+        // впредь ходить сюда только по HTTPS, даже если кто-то введёт
+        // http:// вручную. Браузер сам игнорирует этот заголовок, если
+        // ответ пришёл не по HTTPS (например, при локальной разработке).
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
       },
     },
   },
