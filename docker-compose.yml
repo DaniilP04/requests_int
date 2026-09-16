@@ -46,6 +46,27 @@ services:
     ports:
       - "3000:3000"
 
+  bot:
+    build:
+      context: ../requests_int_bot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Same token as NUXT_BOT_TOKEN above — the app only sends messages
+      # via the HTTP API, while this container is the one long-polling
+      # getUpdates, so sharing one token between them is safe.
+      BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+
   # Runs prisma migrations using the "builder" stage, which has the full
   # node_modules (including the prisma CLI) unlike the slim "runner" image
   # used by the app service. Not started by `docker compose up`; run it
