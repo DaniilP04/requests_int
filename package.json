@@ -11,6 +11,9 @@
     "migrate:deploy": "prisma migrate deploy",
     "start": "node .output/server/index.mjs"
   },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
+  },
   "dependencies": {
     "@fontsource/pt-sans": "^5.2.6",
     "@fontsource/roboto": "^5.2.6",
